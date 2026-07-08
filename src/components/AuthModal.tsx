@@ -64,7 +64,7 @@ export default function AuthModal({ open, step, onAbort }: AuthModalProps) {
               <h2 className="text-3xl font-serif text-accent uppercase tracking-tight">
                 {titles[step]}
               </h2>
-              <p className="text-xs font-bold text-text-muted/60 uppercase tracking-[0.2em] px-8">
+              <p className="text-xs font-bold text-text-muted/80 uppercase tracking-[0.2em] px-8">
                 {descriptions[step]}
               </p>
             </div>

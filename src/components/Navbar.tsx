@@ -47,7 +47,7 @@ export default function Navbar({ isLoggedIn, onLogin, onLogout }: NavbarProps) {
         </div>
 
         {/* Desktop nav */}
-        <div className="hidden lg:flex items-center gap-12 text-[10px] font-black text-text-muted/60 tracking-[0.2em] uppercase">
+        <div className="hidden lg:flex items-center gap-12 text-[10px] font-black text-text-muted/80 tracking-[0.2em] uppercase">
           {navLinks.map((link) => (
             <a
               key={link.href}
@@ -106,7 +106,7 @@ export default function Navbar({ isLoggedIn, onLogin, onLogout }: NavbarProps) {
                   key={link.href}
                   href={link.href}
                   onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
-                  className="text-sm font-black uppercase tracking-[0.2em] text-text-muted/60 hover:text-accent transition-colors py-2"
+                  className="text-sm font-black uppercase tracking-[0.2em] text-text-muted/80 hover:text-accent transition-colors py-2"
                 >
                   {link.label}
                 </a>
@@ -115,7 +115,7 @@ export default function Navbar({ isLoggedIn, onLogin, onLogout }: NavbarProps) {
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.2em] text-text-muted/60 hover:text-accent transition-colors py-2"
+                className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.2em] text-text-muted/80 hover:text-accent transition-colors py-2"
               >
                 <Github className="w-4 h-4" aria-hidden="true" />
                 Source

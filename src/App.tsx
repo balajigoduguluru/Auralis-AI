@@ -11,7 +11,7 @@ import {
   AreaChart, Area, Legend,
 } from 'recharts';
 import { fetchWeather, fetchWeatherByCoords } from './services/weatherService';
-import { generateEnvironmentalReport } from './services/geminiService';
+import { generateEnvironmentalReport, hasApiKey } from './services/geminiService';
 import MapVisualization from './components/MapVisualization';
 import NetworkStatusBanner from './components/NetworkStatus';
 import LiveImages from './components/LiveImages';
@@ -109,6 +109,15 @@ export default function App() {
   );
 
   useEffect(() => { runAnalysis(undefined, 1, 'Nellore'); }, []);
+
+  useEffect(() => {
+    if (!hasApiKey()) {
+      showNotification(
+        'VITE_GEMINI_API_KEY not set. AI reports use fallback mode.',
+        'info'
+      );
+    }
+  }, []);
 
   const runAnalysis = async (e?: FormEvent, daysOverride?: number, cityOverride?: string) => {
     if (e) e.preventDefault();
@@ -208,7 +217,7 @@ export default function App() {
               Auralis Engine v2.0 Online
             </div>
             <h1 className="text-6xl md:text-9xl font-serif leading-[0.9] tracking-tighter text-accent">
-              Intelligence <br /> <span className="text-text-muted/30 italic">Unbound.</span>
+              Intelligence <br /> <span className="text-text-muted/50 italic">Unbound.</span>
             </h1>
             <p className="text-xl md:text-2xl font-medium text-text-muted leading-relaxed max-w-xl">
               Advanced climate diagnostics and environmental risk modeling. Powered by the Auralis Agentic Framework.
@@ -233,7 +242,7 @@ export default function App() {
               </button>
             </form>
 
-            <div className="flex items-center gap-8 pt-4 text-[10px] font-black text-text-muted/40 uppercase tracking-widest">
+            <div className="flex items-center gap-8 pt-4 text-[10px] font-black text-text-muted/60 uppercase tracking-widest">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-success rounded-full animate-pulse motion-reduce:animate-none" aria-hidden="true" />
                 Neural Connection: Stable
@@ -272,7 +281,7 @@ export default function App() {
                   </div>
                 </div>
                 <div className="text-3xl font-serif italic tracking-tight">&ldquo;{data.locationName}&rdquo;</div>
-                <div className="text-[10px] font-bold text-white/50 leading-relaxed">
+                <div className="text-[10px] font-bold text-white/70 leading-relaxed">
                   Deep-learning image verification successful. Regional topography matches expected climate signature profiles for this sector.
                 </div>
               </div>
@@ -287,7 +296,7 @@ export default function App() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
             <div className="space-y-4">
               <h2 className="text-xs uppercase font-black text-text-muted tracking-[0.25em]">Geospatial Intelligence</h2>
-              <h3 className="text-5xl font-serif text-accent tracking-tighter">Live Sentinel <span className="text-text-muted/30 italic">Map</span></h3>
+              <h3 className="text-5xl font-serif text-accent tracking-tighter">Live Sentinel <span className="text-text-muted/50 italic">Map</span></h3>
             </div>
             <div className="bg-bg/50 backdrop-blur-md px-6 py-3 rounded-2xl border border-border/50 flex items-center gap-4">
               <div className="flex items-center gap-2">
@@ -319,11 +328,11 @@ export default function App() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
             <div className="space-y-4">
               <h2 className="text-xs uppercase font-black text-text-muted tracking-[0.25em]">Visual Intelligence Profile</h2>
-              <h3 className="text-5xl font-serif text-accent tracking-tighter">Multi-Spectral <span className="text-text-muted/30 italic">Confirmation</span></h3>
+              <h3 className="text-5xl font-serif text-accent tracking-tighter">Multi-Spectral <span className="text-text-muted/50 italic">Confirmation</span></h3>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex flex-col items-end">
-                <span className="text-[8px] font-black text-text-muted uppercase tracking-widest opacity-40">Source Node</span>
+                <span className="text-[9px] font-black text-text-muted uppercase tracking-widest opacity-70">Source Node</span>
                 <span className="text-xs font-serif text-accent">{data.locationName}</span>
               </div>
               <div className="w-px h-8 bg-border/40 mx-4" aria-hidden="true" />
@@ -334,7 +343,9 @@ export default function App() {
             </div>
           </div>
 
-          <LiveImages locationName={data.locationName} />
+          <div className="h-[500px] md:h-[600px] w-full">
+            <LiveImages locationName={data.locationName} />
+          </div>
         </div>
       </section>
 
@@ -343,7 +354,7 @@ export default function App() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 border-b border-border/50 pb-12">
           <div className="space-y-4">
             <h2 className="text-xs uppercase font-black text-text-muted tracking-[0.25em]">Climate Signatures</h2>
-            <h3 className="text-5xl font-serif text-accent tracking-tighter">Variance <span className="text-text-muted/30 italic">Analytics</span></h3>
+            <h3 className="text-5xl font-serif text-accent tracking-tighter">Variance <span className="text-text-muted/50 italic">Analytics</span></h3>
           </div>
           <div className="flex flex-wrap items-center gap-4 bg-bg p-1 rounded-xl border border-border/50 shadow-inner">
             {(['all', 'temp', 'humidity', 'rainfall'] as const).map((m) => (
@@ -380,7 +391,7 @@ export default function App() {
               <Activity className="w-3 h-3 animate-pulse motion-reduce:animate-none" aria-hidden="true" />
               Signal Overlay: {activeMetric === 'all' ? 'Unified Stream' : activeMetric.toUpperCase()}
             </div>
-            <div className="text-[8px] text-text-muted/40 uppercase font-black tracking-widest">
+            <div className="text-[9px] text-text-muted/60 uppercase font-black tracking-widest">
               Source: Satellite-Gamma Link &bull; Verified
             </div>
           </div>
@@ -433,7 +444,7 @@ export default function App() {
       <section className="py-24 max-w-7xl mx-auto px-6 md:px-12 space-y-12">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h4 className="text-3xl font-serif text-accent tracking-tighter uppercase">Signal <span className="text-text-muted/30 italic">Archive</span></h4>
+            <h4 className="text-3xl font-serif text-accent tracking-tighter uppercase">Signal <span className="text-text-muted/50 italic">Archive</span></h4>
             <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em]">Historical Telemetry Registry &bull; 24H Window</p>
           </div>
           <button
@@ -467,7 +478,7 @@ export default function App() {
                     <tr key={idx} className="hover:bg-accent/5 transition-colors group">
                       <td className="px-6 md:px-8 py-6">
                         <div className="text-[11px] font-black text-accent uppercase tracking-wider">{entry.time}</div>
-                        <div className="text-[8px] text-text-muted/50 font-bold uppercase tracking-widest">{entry.date}</div>
+                        <div className="text-[9px] text-text-muted/70 font-bold uppercase tracking-widest">{entry.date}</div>
                       </td>
                       <td className="px-6 md:px-8 py-6 text-[11px] font-mono font-black text-accent">{entry.temp}&deg;C</td>
                       <td className="px-6 md:px-8 py-6 text-[11px] font-mono font-black text-accent">{entry.humidity}%</td>
@@ -494,7 +505,7 @@ export default function App() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 border-b border-border/50 pb-12">
             <div className="space-y-4">
               <h2 className="text-xs uppercase font-black text-text-muted tracking-[0.25em]">Live Intelligence Protocol</h2>
-              <h3 className="text-5xl font-serif text-accent">Pulse Analysis <span className="text-text-muted/30 italic">Report</span></h3>
+              <h3 className="text-5xl font-serif text-accent">Pulse Analysis <span className="text-text-muted/50 italic">Report</span></h3>
             </div>
             <div className="flex items-center gap-8 text-[11px] font-bold text-text-muted tracking-widest uppercase">
               <div className="flex flex-col items-end">
@@ -533,17 +544,17 @@ export default function App() {
               </div>
               <div className="z-10 space-y-4">
                 <div className="flex items-center gap-4 flex-wrap">
-                  <span className="text-[10px] uppercase font-black tracking-[0.3em] opacity-60">Neural Risk Engine</span>
+                  <span className="text-[10px] uppercase font-black tracking-[0.3em] opacity-80">Neural Risk Engine</span>
                   <span className="px-4 py-1 bg-white/20 rounded-full text-[10px] font-black tracking-widest">ACTIVE MONITORING</span>
                 </div>
                 <div>
                   <div className="text-6xl md:text-8xl font-serif leading-none tracking-tighter mb-2">{data.risk}</div>
-                  <div className="text-[10px] uppercase font-black tracking-[0.2em] opacity-60">System Severity Index &bull; Sentinel Linked</div>
+                  <div className="text-[10px] uppercase font-black tracking-[0.2em] opacity-80">System Severity Index &bull; Sentinel Linked</div>
                 </div>
               </div>
               <div className="z-10 mt-8 md:mt-0 flex flex-col items-end gap-6">
                 <div className="text-right max-w-xs">
-                  <div className="text-[10px] uppercase font-black tracking-widest opacity-40 mb-2 underline underline-offset-4">Current Protocol</div>
+                  <div className="text-[10px] uppercase font-black tracking-widest opacity-60 mb-2 underline underline-offset-4">Current Protocol</div>
                   <div className="text-sm font-medium leading-relaxed opacity-80">
                     Auralis AI logic determines {data.risk.toLowerCase()} variance for this sector. All orbital sensors are aligned with ground telemetry.
                   </div>
@@ -564,7 +575,7 @@ export default function App() {
                     <Zap className="w-8 h-8" aria-hidden="true" />
                   </div>
                   <div className="space-y-1">
-                    <h4 className="text-2xl font-serif text-accent uppercase tracking-tight">Agent Analysis <span className="text-text-muted/40 italic">Output</span></h4>
+                    <h4 className="text-2xl font-serif text-accent uppercase tracking-tight">Agent Analysis <span className="text-text-muted/60 italic">Output</span></h4>
                     <p className="text-[10px] uppercase font-black text-text-muted tracking-[0.25em]">Auralis v2.0 Architecture</p>
                   </div>
                 </div>
@@ -595,7 +606,7 @@ export default function App() {
 
               <div className="flex flex-col md:flex-row items-center gap-8 justify-between border-t border-border/50 pt-8 mt-12 z-10">
                 <div className="space-y-2 w-full">
-                  <div className="flex justify-between items-end text-[9px] font-black uppercase tracking-[0.2em] text-text-muted opacity-60">
+                  <div className="flex justify-between items-end text-[9px] font-black uppercase tracking-[0.2em] text-text-muted opacity-80">
                     <span>Model Stability Profile</span>
                     <span className="text-accent">{data.risk === 'HIGH' ? '78.2%' : '94.6%'} Confidence</span>
                   </div>
@@ -626,7 +637,7 @@ export default function App() {
                   <div className="w-2 h-2 bg-accent rounded-full animate-pulse shadow-[0_0_10px_rgba(27,67,50,0.5)] motion-reduce:animate-none" aria-hidden="true" />
                 </div>
                 <div className="relative group">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted/40 group-focus-within:text-accent transition-colors pointer-events-none" aria-hidden="true" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted/60 group-focus-within:text-accent transition-colors pointer-events-none" aria-hidden="true" />
                   <input
                     type="text"
                     placeholder="Filter Signal ID..."
@@ -650,7 +661,7 @@ export default function App() {
                           className="space-y-2 group cursor-default"
                         >
                           <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-mono text-text-muted/50">{log.time}</span>
+                            <span className="text-[10px] font-mono text-text-muted/70">{log.time}</span>
                             <h5 className="text-sm font-bold text-accent group-hover:translate-x-1 transition-transform">{log.title}</h5>
                           </div>
                           <p className="text-xs text-text-muted leading-relaxed pl-12 border-l border-border/30">
@@ -676,7 +687,7 @@ export default function App() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 mb-16">
               <div className="space-y-4">
                 <h2 className="text-xs uppercase font-black text-text-muted tracking-[0.25em]">Future State Projections</h2>
-                <h3 className="text-5xl font-serif text-accent tracking-tighter italic">Predictive <span className="text-text-muted/30">Timeline</span></h3>
+                <h3 className="text-5xl font-serif text-accent tracking-tighter italic">Predictive <span className="text-text-muted/50">Timeline</span></h3>
               </div>
               <div className="flex items-center gap-3 bg-surface/50 px-4 py-2 rounded-2xl border border-border/30">
                 <Activity className="w-4 h-4 text-accent animate-pulse motion-reduce:animate-none" aria-hidden="true" />
@@ -699,7 +710,7 @@ export default function App() {
                       <div className={`text-[10px] font-black uppercase tracking-widest ${p.risk === 'HIGH' ? 'text-error' : p.risk === 'MODERATE' ? 'text-warning' : 'text-success'}`}>
                         {p.risk} RISK
                       </div>
-                      <div className="text-xs font-medium text-text-muted italic opacity-60">{p.label}</div>
+                      <div className="text-xs font-medium text-text-muted italic opacity-80">{p.label}</div>
                     </div>
                   </div>
                   <div className="mt-6 pt-4 border-t border-border/20">
@@ -739,7 +750,7 @@ export default function App() {
                       value={feedback}
                       onChange={(e) => setFeedback(e.target.value)}
                       placeholder="Is this prediction accurate for your locale?"
-                      className="w-full bg-surface border border-border/40 rounded-2xl p-6 h-40 outline-none focus:ring-4 focus:ring-accent/5 focus:border-accent/30 transition-all font-medium text-text placeholder:text-text-muted/30 resize-none"
+                      className="w-full bg-surface border border-border/40 rounded-2xl p-6 h-40 outline-none focus:ring-4 focus:ring-accent/5 focus:border-accent/30 transition-all font-medium text-text placeholder:text-text-muted/50 resize-none"
                     />
                   </div>
                   <div className="flex flex-col justify-end space-y-6">

@@ -88,7 +88,7 @@ export default function WeatherWatcher({ weather, onNotify }: WeatherWatcherProp
             >
               <div className="flex items-center justify-between mb-12">
                 <div className="space-y-1">
-                  <h2 className="text-3xl font-serif text-accent tracking-tighter uppercase">Weather <span className="text-text-muted/30 italic">Watch</span></h2>
+                  <h2 className="text-3xl font-serif text-accent tracking-tighter uppercase">Weather <span className="text-text-muted/50 italic">Watch</span></h2>
                   <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em]">Neural Alert Protocol</p>
                 </div>
                 <button 
@@ -104,14 +104,14 @@ export default function WeatherWatcher({ weather, onNotify }: WeatherWatcherProp
                   <label className="block">
                     <span className="text-[10px] font-black text-accent uppercase tracking-widest block mb-4">Target Destination</span>
                     <div className="relative group">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-accent transition-colors" />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-accent transition-colors" />
                       <input
                         type="email"
                         required
                         placeholder="satellite.comm@auralis.io"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-sm text-white outline-none focus:ring-1 focus:ring-accent/40 transition-all placeholder:text-white/10"
+                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-sm text-white outline-none focus:ring-1 focus:ring-accent/40 transition-all placeholder:text-white/30"
                       />
                     </div>
                   </label>
@@ -119,7 +119,7 @@ export default function WeatherWatcher({ weather, onNotify }: WeatherWatcherProp
                   <label className="block">
                     <span className="text-[10px] font-black text-accent uppercase tracking-widest block mb-4">Sensitivity Calibration</span>
                     <div className="relative group">
-                      <ShieldAlert className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-accent transition-colors" />
+                      <ShieldAlert className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-accent transition-colors" />
                       <select
                         value={sensitivity}
                         onChange={(e) => setSensitivity(e.target.value as any)}
@@ -155,7 +155,7 @@ export default function WeatherWatcher({ weather, onNotify }: WeatherWatcherProp
                       className={`w-full py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${
                         isAlertThresholdMet 
                         ? 'bg-error text-white hover:bg-error/80 shadow-lg shadow-error/20' 
-                        : 'bg-white/5 text-white/20 cursor-not-allowed border border-white/5'
+                        : 'bg-white/5 text-white/40 cursor-not-allowed border border-white/5'
                       }`}
                     >
                       <Send className="w-4 h-4" />
@@ -191,7 +191,7 @@ export default function WeatherWatcher({ weather, onNotify }: WeatherWatcherProp
               </form>
 
               <div className="mt-8 text-center">
-                 <p className="text-[8px] text-white/20 uppercase font-bold tracking-[0.2em]">End-to-End Neural Encryption Applied</p>
+                 <p className="text-[8px] text-white/40 uppercase font-bold tracking-[0.2em]">End-to-End Neural Encryption Applied</p>
               </div>
             </motion.div>
           </>

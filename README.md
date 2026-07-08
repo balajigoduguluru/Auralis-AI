@@ -176,5 +176,5 @@ auralis-ai/
   <br/>
   <sub>Built with React 19, TypeScript, Vite 6, and Google Gemini.</sub>
   <br/>
-  <sub>&copy; 2026 Auralis Intelligence Group</sub>
+  <sub>&copy; 2026 Developed by Balaji Goduguluru</sub>
 </div>
