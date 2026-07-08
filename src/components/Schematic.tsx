@@ -34,10 +34,10 @@ export default function Schematic() {
         </g>
         
         {/* Tags */}
-        <text x="200" y="25" textAnchor="middle" fill="#1B4332" fontSize="8" fontWeight="bold" className="uppercase tracking-widest opacity-40">Orbital-Alpha</text>
-        <text x="200" y="215" textAnchor="middle" fill="#1B4332" fontSize="8" fontWeight="bold" className="uppercase tracking-widest opacity-40">Ground-Sentinel</text>
-        <text x="100" y="123" textAnchor="end" fill="#1B4332" fontSize="8" fontWeight="bold" className="uppercase tracking-widest opacity-40">Atmospheric</text>
-        <text x="300" y="123" textAnchor="start" fill="#1B4332" fontSize="8" fontWeight="bold" className="uppercase tracking-widest opacity-40">Telemetry</text>
+        <text x="200" y="25" textAnchor="middle" fill="#1B4332" fontSize="8" fontWeight="bold" className="uppercase tracking-widest opacity-60">Orbital-Alpha</text>
+        <text x="200" y="215" textAnchor="middle" fill="#1B4332" fontSize="8" fontWeight="bold" className="uppercase tracking-widest opacity-60">Ground-Sentinel</text>
+        <text x="100" y="123" textAnchor="end" fill="#1B4332" fontSize="8" fontWeight="bold" className="uppercase tracking-widest opacity-60">Atmospheric</text>
+        <text x="300" y="123" textAnchor="start" fill="#1B4332" fontSize="8" fontWeight="bold" className="uppercase tracking-widest opacity-60">Telemetry</text>
         
         {/* Core Label */}
         <text x="200" y="165" textAnchor="middle" fill="#1B4332" fontSize="10" fontWeight="black" className="uppercase tracking-[0.3em]">Auralis AI</text>

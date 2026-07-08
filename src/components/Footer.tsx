@@ -101,16 +101,12 @@ export default function Footer({ showNotification }: FooterProps) {
             </form>
           </div>
 
-          <div className="text-[11px] font-black uppercase tracking-[0.25em] opacity-70 flex flex-col items-end gap-2 text-right">
-            <span>&copy; 2026 AURALIS INTELLIGENCE GROUP</span>
+          <div className="text-[12px] font-black uppercase tracking-[0.25em] opacity-90 flex flex-col items-end gap-2 text-right">
+            <span>&copy; 2026 Developed by <span className="text-white font-bold">Balaji Goduguluru</span></span>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-success rounded-full" aria-hidden="true" />
-              <span className="opacity-80">DECENTRALIZED NODE ACTIVE</span>
+              <div className="w-2 h-2 bg-success rounded-full shadow-[0_0_8px_#52B788]" aria-hidden="true" />
+              <span className="opacity-90">DECENTRALIZED NODE ACTIVE</span>
             </div>
-            <div className="w-full border-t border-white/20 my-1.5" aria-hidden="true" />
-            <span className="text-[10px] tracking-[0.2em] opacity-80">
-              Developed by <span className="text-white font-bold">Balaji Goduguluru</span>
-            </span>
           </div>
         </div>
       </div>

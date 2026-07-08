@@ -40,7 +40,7 @@ export default function MapVisualization({ center, locationName, risk, zoom, onZ
       {/* Map Search Bar */}
       <div className="absolute top-8 left-8 z-30 w-full max-w-xs pointer-events-auto">
         <div className="relative group/search">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within/search:text-accent transition-colors" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60 group-focus-within/search:text-accent transition-colors" />
           <input 
             type="text"
             placeholder="Search city or coords..."
@@ -91,17 +91,17 @@ export default function MapVisualization({ center, locationName, risk, zoom, onZ
             }`} />
             <div>
               <div className="text-[10px] font-black text-white/90 uppercase tracking-[0.2em]">{locationName}</div>
-              <div className="text-[8px] text-white/40 font-bold uppercase tracking-widest">Orbital Intercept: Locked</div>
+              <div className="text-[8px] text-white/60 font-bold uppercase tracking-widest">Orbital Intercept: Locked</div>
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
              <div className="space-y-1">
-                <span className="text-[8px] font-black text-white/30 uppercase tracking-widest block">Geospatial Key</span>
+                <span className="text-[8px] font-black text-white/50 uppercase tracking-widest block">Geospatial Key</span>
                 <span className="text-[10px] font-mono text-accent">GS-{lat.toFixed(2).replace('.', '')}</span>
              </div>
              <div className="space-y-1">
-                <span className="text-[8px] font-black text-white/30 uppercase tracking-widest block">Neural Risk</span>
+                <span className="text-[8px] font-black text-white/50 uppercase tracking-widest block">Neural Risk</span>
                 <span className={`text-[10px] font-black ${
                   risk === 'HIGH' ? 'text-error' : 'text-accent'
                 }`}>{risk || 'STABLE'}</span>
@@ -122,7 +122,7 @@ export default function MapVisualization({ center, locationName, risk, zoom, onZ
 
       {/* Visual Augmentation UI */}
       <div className="absolute top-8 right-8 z-20">
-         <div className="w-12 h-12 bg-white/5 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-accent transition-colors cursor-pointer pointer-events-auto" onClick={() => onLocationSelect && onLocationSelect(lat, lon)}>
+         <div className="w-12 h-12 bg-white/5 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center text-white/60 hover:text-accent transition-colors cursor-pointer pointer-events-auto" onClick={() => onLocationSelect && onLocationSelect(lat, lon)}>
             <Activity className="w-5 h-5 animate-pulse" />
          </div>
       </div>
