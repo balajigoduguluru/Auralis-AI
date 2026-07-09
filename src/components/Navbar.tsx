@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Zap, Github, ShieldCheck, ArrowRight, Menu, X } from 'lucide-react';
+import { Zap, Github, ShieldCheck, ArrowRight, Menu, X, Lock } from 'lucide-react';
 
 interface NavbarProps {
   isLoggedIn: boolean;
   onLogin: () => void;
   onLogout: () => void;
+  onAdminOpen: () => void;
 }
 
-export default function Navbar({ isLoggedIn, onLogin, onLogout }: NavbarProps) {
+export default function Navbar({ isLoggedIn, onLogin, onLogout, onAdminOpen }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
@@ -71,6 +72,14 @@ export default function Navbar({ isLoggedIn, onLogin, onLogout }: NavbarProps) {
 
         <div className="flex items-center gap-4">
           <button
+            onClick={onAdminOpen}
+            className="hidden md:flex items-center gap-2 group text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-accent transition-colors cursor-pointer"
+            aria-label="Open admin panel"
+          >
+            <Lock className="w-4 h-4" aria-hidden="true" />
+            <span>Admin</span>
+          </button>
+          <button
             onClick={isLoggedIn ? onLogout : onLogin}
             className="hidden md:flex items-center gap-2 group text-[10px] font-black uppercase tracking-widest text-accent border border-accent/20 px-4 py-2 rounded-lg hover:bg-accent hover:text-white transition-all cursor-pointer"
             aria-label={isLoggedIn ? 'Logout' : 'Authenticate'}
@@ -120,6 +129,13 @@ export default function Navbar({ isLoggedIn, onLogin, onLogout }: NavbarProps) {
                 <Github className="w-4 h-4" aria-hidden="true" />
                 Source
               </a>
+              <button
+                onClick={() => { setMobileOpen(false); onAdminOpen(); }}
+                className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-text-muted hover:text-accent transition-colors py-2 cursor-pointer"
+              >
+                <Lock className="w-4 h-4" />
+                Admin Panel
+              </button>
               <hr className="border-border/20 my-2" />
               <button
                 onClick={() => { setMobileOpen(false); isLoggedIn ? onLogout() : onLogin(); }}

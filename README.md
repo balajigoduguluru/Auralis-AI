@@ -24,6 +24,8 @@
 | **Telemetry** | Open-Meteo API | Live weather data ingestion across 10+ metrics |
 | **Maps** | Google Maps Embed + Leaflet | Geospatial visualization and coordinate intercept |
 | **Charts** | Recharts | Multi-variant area/chart analytics with 24H/7D windows |
+| **Email** | EmailJS | Client-side email dispatch for observation notifications |
+| **Persistence** | Browser localStorage | User observation storage across sessions |
 
 ### Core Differentiators
 
@@ -33,6 +35,8 @@
 - **Predictive Timeline** &mdash; Risk-propagated forward projection across 4, 8, 12, and 24-hour windows.
 - **Multi-Spectral Imaging** &mdash; Live image aggregation from Wikipedia/Wikimedia Commons for every scanned location.
 - **Sentinel Auth Theater** &mdash; Immersive satellite-login UX demonstrating secured-node handshake patterns.
+- **Community Observation Submission** &mdash; Users can submit localized observations that persist in browser storage and optionally trigger email notifications.
+- **Admin Observation Panel** &mdash; Centralized view of all community submissions with delivery status tracking and bulk purge.
 
 ---
 
@@ -62,6 +66,11 @@
 │            │                            │                    │
 │            ▼                            ▼                    │
 │    open-meteo.com              generativeai.googleapis.com   │
+│                                                              │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │                  emailService                            │  │
+│  │              EmailJS (client-side)                       │  │
+│  └──────────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -130,6 +139,7 @@ auralis-ai/
 ├── public/                      # Static assets
 ├── src/
 │   ├── components/              # UI components
+│   │   ├── AdminModal.tsx       # Admin observation panel
 │   │   ├── AuthModal.tsx        # Satellite login theater
 │   │   ├── DiagnosticModal.tsx  # AI diagnostics panel
 │   │   ├── Footer.tsx           # App footer with links
@@ -145,6 +155,7 @@ auralis-ai/
 │   │   ├── useAuth.ts           # Auth state machine
 │   │   └── useNotifications.ts  # Notification queue
 │   ├── services/                # API service layer
+│   │   ├── emailService.ts      # EmailJS integration
 │   │   ├── geminiService.ts     # Google GenAI client
 │   │   └── weatherService.ts    # Open-Meteo client
 │   ├── types/                   # TypeScript type definitions
@@ -158,8 +169,15 @@ auralis-ai/
 ├── CHANGELOG.md                 # Version history
 ├── package.json                 # Dependency manifest
 ├── tsconfig.json                # TypeScript configuration
+├── USER_GUIDE.md                # Comprehensive user documentation
 └── vite.config.ts               # Vite build configuration
 ```
+
+---
+
+## Documentation
+
+For a complete walkthrough of all features, including the Admin Panel, Observation Submission, EmailJS setup, and every user-facing component, see the **[USER_GUIDE.md](./USER_GUIDE.md)**.
 
 ---
 
