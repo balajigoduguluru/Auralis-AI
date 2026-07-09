@@ -26,7 +26,9 @@ import RiskBanner from './components/RiskBanner';
 
 import { useNotifications } from './hooks/useNotifications';
 import { useAuth } from './hooks/useAuth';
-import type { HistoryEntry, Prediction, LogEntry, MetricFilter } from './types';
+import type { HistoryEntry, Prediction, LogEntry, MetricFilter, FeedbackEntry } from './types';
+import { sendFeedbackEmail, canSendEmail } from './services/emailService';
+import AdminModal from './components/AdminModal';
 
 function calculateRisk(temp: number, windSpeed: number, precipitation: number): 'HIGH' | 'MODERATE' | 'LOW' {
   if (temp > 38 || windSpeed > 60 || precipitation > 50) return 'HIGH';
@@ -85,6 +87,13 @@ export default function App() {
   const [showDiagnostic, setShowDiagnostic] = useState(false);
   const [activeMetric, setActiveMetric] = useState<MetricFilter>('all');
   const [logFilter, setLogFilter] = useState('');
+  const [showAdmin, setShowAdmin] = useState(false);
+  const [observations, setObservations] = useState<FeedbackEntry[]>(() => {
+    try {
+      const saved = localStorage.getItem('auralis-observations');
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
   const [mapZoom, setMapZoom] = useState(14);
 
   const [data, setData] = useState({
@@ -185,10 +194,38 @@ export default function App() {
       .catch(() => showNotification('Copy failed. Manual link sharing required.', 'info'));
   };
 
-  const submitObservation = () => {
+  const submitObservation = async () => {
     if (!feedback.trim()) { showNotification('Please provide observation details.', 'info'); return; }
-    showNotification('Observation submitted to the sentinel network.');
+
+    const entry: FeedbackEntry = {
+      id: crypto.randomUUID(),
+      message: feedback.trim(),
+      location: data.locationName,
+      timestamp: new Date().toLocaleString(),
+      emailSent: false,
+    };
+
+    if (canSendEmail()) {
+      const sent = await sendFeedbackEmail({
+        message: entry.message,
+        location: entry.location,
+        timestamp: entry.timestamp,
+      });
+      entry.emailSent = sent;
+    }
+
+    const updated = [...observations, entry];
+    setObservations(updated);
+    localStorage.setItem('auralis-observations', JSON.stringify(updated));
     setFeedback('');
+
+    if (entry.emailSent) {
+      showNotification('Observation relayed to sentinel command.', 'success');
+    } else if (canSendEmail()) {
+      showNotification('Observation recorded. Email relay unavailable.', 'info');
+    } else {
+      showNotification('Observation submitted to the sentinel network.');
+    }
   };
 
   return (
@@ -196,10 +233,11 @@ export default function App() {
       <AuthModal open={showLoginModal} step={loginStep} onAbort={abortLogin} />
       <RiskBanner risk={data.risk} locationName={data.locationName} />
       <DiagnosticModal open={showDiagnostic} locationName={data.locationName} onClose={() => setShowDiagnostic(false)} />
+      <AdminModal open={showAdmin} observations={observations} onClose={() => setShowAdmin(false)} onClear={() => { setObservations([]); localStorage.removeItem('auralis-observations'); showNotification('Observation archive purged.', 'info'); }} />
       <NotificationToast notification={notification} onDismiss={clearNotification} />
       <div className="fixed inset-0 bg-texture pointer-events-none opacity-[0.03]" aria-hidden="true" />
 
-      <Navbar isLoggedIn={isLoggedIn} onLogin={startLoginSequence} onLogout={handleLogout} />
+      <Navbar isLoggedIn={isLoggedIn} onLogin={startLoginSequence} onLogout={handleLogout} onAdminOpen={() => setShowAdmin(true)} />
       <NetworkStatusBanner />
 
       {/* Hero */}
