@@ -76,7 +76,9 @@ export type LoginStep = 0 | 1 | 2 | 3 | 4;
 export interface FeedbackEntry {
   id: string;
   message: string;
+  userEmail: string;
   location: string;
   timestamp: string;
-  emailSent: boolean;
+  notified: boolean;
+  autoReplied: boolean;
 }

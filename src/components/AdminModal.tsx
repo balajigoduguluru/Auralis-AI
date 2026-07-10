@@ -97,9 +97,15 @@ export default function AdminModal({ open, observations, onClose, onClear }: Adm
                         <MapPin className="w-3 h-3" aria-hidden="true" />
                         {entry.location}
                       </span>
-                      <span className={`flex items-center gap-2 ${entry.emailSent ? 'text-success' : 'text-warning'}`}>
+                      <span className="flex items-center gap-2 text-text-muted/70">
                         <Mail className="w-3 h-3" aria-hidden="true" />
-                        {entry.emailSent ? 'Email Delivered' : 'Pending'}
+                        {entry.userEmail}
+                      </span>
+                      <span className={`flex items-center gap-2 ${entry.notified && entry.autoReplied ? 'text-success' : 'text-warning'}`}>
+                        <Mail className="w-3 h-3" aria-hidden="true" />
+                        {entry.notified ? 'Notified' : 'Pending'}
+                        {' / '}
+                        {entry.autoReplied ? 'Replied' : 'Pending'}
                       </span>
                     </div>
                   </motion.div>

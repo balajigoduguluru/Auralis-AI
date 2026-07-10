@@ -1,6 +1,6 @@
 # Auralis AI — User Guide
 
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **Author:** Balaji Goduguluru  
 **Repository:** [github.com/balajigoduguluru/Auralis-AI](https://github.com/balajigoduguluru/Auralis-AI)
 
@@ -199,13 +199,16 @@ Each card includes an animated progress bar at the bottom.
 ## 16. Community Observation Submission
 
 - **Text area** in the community section for user feedback and observations
+- **Email input field** (required) — users must provide their email to submit
 - Displays **Protocol Trust Score** (99.82%)
 - **"Submit Observation"** button with hover animation
 - On submission:
   1. Observation is saved to **localStorage** for persistence
-  2. An **email notification** is sent to `balugoduguluri189@gmail.com` **via EmailJS** (if configured)
-  3. A success/info notification toast is displayed
-  4. The text area is cleared
+  2. An **admin notification email** is sent to `balugoduguluri189@gmail.com` via EmailJS
+  3. An **auto-reply confirmation email** is sent back to the user
+  4. Both emails are sent in parallel; status is tracked per entry
+  5. A success notification toast is displayed: *"Thank you for your observation!"*
+  6. The text area and email field are cleared
 
 ---
 
@@ -243,13 +246,18 @@ Each card includes an animated progress bar at the bottom.
 
 ## 20. Admin Panel
 
-- Accessible via the **lock icon / "Admin"** button in the navigation bar (desktop and mobile)
+- **Hidden by default** — the Admin button is only visible after authenticating as admin
+- To access: set `VITE_ADMIN_SECRET` in `.env.local`, then click **Auth Auralis** in the navbar
+- After logging in, the **Admin** button (lock icon) appears in the navigation bar
+- Clicking Admin prompts for the **admin passcode** (set via `VITE_ADMIN_SECRET`)
+- Once authenticated, the admin session persists across page refreshes
 - Opens a modal showing all submitted community observations
 - Each entry displays:
   - Observation message
+  - User's email address
   - Timestamp of submission
   - Location (city/coordinates) when submitted
-  - Email delivery status (Delivered / Pending)
+  - Email delivery status: **Notified** (admin notified) / **Replied** (auto-reply sent)
 - Observations are listed in **reverse chronological order**
 - **"Purge All"** button to clear all observations (requires confirmation, auto-cancels after 3 seconds)
 - Empty state message when no observations exist
@@ -258,24 +266,34 @@ Each card includes an animated progress bar at the bottom.
 
 ## 21. EmailJS Configuration
 
-To receive email notifications when users submit observations:
+Auralis AI sends two emails when a user submits an observation:
+
+| Email | Recipient | Template |
+|-------|-----------|----------|
+| **Admin Notification** | `balugoduguluri189@gmail.com` | Notifies you of new observation |
+| **Auto-Reply** | The submitting user | Sends a thank-you confirmation |
+
+### Setup Steps
 
 1. Sign up at [emailjs.com](https://www.emailjs.com/) (free tier: 200 emails/month)
 2. Create an **Email Service** (e.g., Gmail) and note the **Service ID**
-3. Create an **Email Template** with the following variables:
-   - `{{to_email}}` — recipient email
-   - `{{from_name}}` — sender name
-   - `{{message}}` — observation text
-   - `{{location}}` — scanned location
-   - `{{timestamp}}` — submission time
+3. Create **two Email Templates**:
+
+   **Template 1 — Notification** (admin alert):
+   - Variables: `{{to_email}}`, `{{from_name}}`, `{{user_email}}`, `{{message}}`, `{{location}}`, `{{timestamp}}`
+
+   **Template 2 — Auto-Reply** (user confirmation):
+   - Variables: `{{to_email}}`, `{{from_name}}`, `{{message}}`, `{{location}}`, `{{reply_message}}`
+
 4. Copy your **Account Public Key** from the EmailJS Dashboard
 5. Add the following to your `.env.local` file:
    ```
    VITE_EMAILJS_SERVICE_ID="your_service_id"
-   VITE_EMAILJS_TEMPLATE_ID="your_template_id"
+   VITE_EMAILJS_NOTIFICATION_TEMPLATE_ID="your_notification_template_id"
+   VITE_EMAILJS_AUTOREPLY_TEMPLATE_ID="your_auto_reply_template_id"
    VITE_EMAILJS_PUBLIC_KEY="your_public_key"
    ```
-6. The recipient email (`balugoduguluri189@gmail.com`) is hardcoded in the email service
+6. Optionally set `VITE_ADMIN_SECRET` in `.env.local` to password-protect the admin panel
 
 **Important:** `VITE_*` variables are inlined into the JavaScript bundle at build time and are visible in browser dev tools. For production, consider using a server-side proxy.
 
@@ -337,11 +355,13 @@ npm run lint
 | `APP_URL` | No | Public URL for the instance |
 | `VITE_DEBUG_MODE` | No | Enable debug logging (`true`/`false`) |
 | `DISABLE_HMR` | No | Disable Hot Module Replacement |
-| `VITE_EMAILJS_SERVICE_ID` | No* | EmailJS Service ID for feedback emails |
-| `VITE_EMAILJS_TEMPLATE_ID` | No* | EmailJS Template ID for feedback emails |
+| `VITE_EMAILJS_SERVICE_ID` | No* | EmailJS Service ID |
+| `VITE_EMAILJS_NOTIFICATION_TEMPLATE_ID` | No* | EmailJS template for admin notifications |
+| `VITE_EMAILJS_AUTOREPLY_TEMPLATE_ID` | No* | EmailJS template for user auto-replies |
 | `VITE_EMAILJS_PUBLIC_KEY` | No* | EmailJS Account Public Key |
+| `VITE_ADMIN_SECRET` | No | Password to access the admin panel |
 
-*\*Required only for email notification functionality.*
+*\*Required only for email functionality.*
 
 ---
 

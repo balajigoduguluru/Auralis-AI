@@ -6,6 +6,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.1.0] — 2026-07-10 — Admin Auth & Dual Email Flow
+
+### Added
+
+- **Admin password protection** — Admin panel is hidden behind `VITE_ADMIN_SECRET` env var; requires admin login to access
+- **Email input field** in observation form (required) to capture user's email for auto-reply
+- **Auto-reply email** — sends a custom thank-you confirmation back to the user via a separate EmailJS template
+- **Admin login modal** — passcode prompt before granting admin access
+- **Admin session persistence** — admin status stored in `sessionStorage` across page refreshes
+- **EmailJS initialization** — proper `emailjs.init()` call with the public key
+- **Detailed EmailJS logging** — success/error logs with status codes and response text
+
+### Changed
+
+- `sendFeedbackEmail` split into `sendAdminNotification` and `sendAutoReply` — both fire in parallel via `Promise.all`
+- **Admin button** now hidden from navbar until admin is authenticated
+- **AdminModal** shows user email and dual status (Notified / Replied) per entry
+- **Notification messages** simplified to "Thank you for your observation!" on all submission outcomes
+- `FeedbackEntry` type: `emailSent` replaced with `notified` / `autoReplied` booleans, added `userEmail` field
+- Environment variables: `VITE_EMAILJS_TEMPLATE_ID` → `VITE_EMAILJS_NOTIFICATION_TEMPLATE_ID` + `VITE_EMAILJS_AUTOREPLY_TEMPLATE_ID`
+- `.env.example` updated with new env vars and admin secret documentation
+
+### Fixed
+
+- `canSendEmail()` now checks `NOTIFICATION_TEMPLATE_ID` instead of the old `TEMPLATE_ID`
+- Admin auth gated behind password check — no unauthorized access to observation data
+
+---
+
 ## [1.0.0] — 2026-07-07 — Stable Production Baseline
 
 ### Added

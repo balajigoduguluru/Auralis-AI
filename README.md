@@ -35,8 +35,8 @@
 - **Predictive Timeline** &mdash; Risk-propagated forward projection across 4, 8, 12, and 24-hour windows.
 - **Multi-Spectral Imaging** &mdash; Live image aggregation from Wikipedia/Wikimedia Commons for every scanned location.
 - **Sentinel Auth Theater** &mdash; Immersive satellite-login UX demonstrating secured-node handshake patterns.
-- **Community Observation Submission** &mdash; Users can submit localized observations that persist in browser storage and optionally trigger email notifications.
-- **Admin Observation Panel** &mdash; Centralized view of all community submissions with delivery status tracking and bulk purge.
+- **Community Observation Submission** &mdash; Users enter their email and observation; submissions trigger an admin notification and an auto-reply confirmation email.
+- **Admin Observation Panel** &mdash; Password-protected view of all community submissions with dual email delivery status (Notified / Replied) and bulk purge.
 
 ---
 

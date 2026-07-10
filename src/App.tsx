@@ -27,7 +27,7 @@ import RiskBanner from './components/RiskBanner';
 import { useNotifications } from './hooks/useNotifications';
 import { useAuth } from './hooks/useAuth';
 import type { HistoryEntry, Prediction, LogEntry, MetricFilter, FeedbackEntry } from './types';
-import { sendFeedbackEmail, canSendEmail } from './services/emailService';
+import { sendAdminNotification, sendAutoReply, canSendEmail } from './services/emailService';
 import AdminModal from './components/AdminModal';
 
 function calculateRisk(temp: number, windSpeed: number, precipitation: number): 'HIGH' | 'MODERATE' | 'LOW' {
@@ -82,12 +82,17 @@ export default function App() {
 
   const [city, setCity] = useState('Nellore');
   const [feedback, setFeedback] = useState('');
+  const [feedbackEmail, setFeedbackEmail] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [timeRange, setTimeRange] = useState(1);
   const [showDiagnostic, setShowDiagnostic] = useState(false);
   const [activeMetric, setActiveMetric] = useState<MetricFilter>('all');
   const [logFilter, setLogFilter] = useState('');
   const [showAdmin, setShowAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => sessionStorage.getItem('auralis-admin') === 'true');
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [adminPasswordInput, setAdminPasswordInput] = useState('');
+  const ADMIN_SECRET = import.meta.env.VITE_ADMIN_SECRET;
   const [observations, setObservations] = useState<FeedbackEntry[]>(() => {
     try {
       const saved = localStorage.getItem('auralis-observations');
@@ -196,35 +201,67 @@ export default function App() {
 
   const submitObservation = async () => {
     if (!feedback.trim()) { showNotification('Please provide observation details.', 'info'); return; }
+    if (!feedbackEmail.trim()) { showNotification('Please provide your email for confirmation.', 'info'); return; }
 
     const entry: FeedbackEntry = {
       id: crypto.randomUUID(),
       message: feedback.trim(),
+      userEmail: feedbackEmail.trim(),
       location: data.locationName,
       timestamp: new Date().toLocaleString(),
-      emailSent: false,
+      notified: false,
+      autoReplied: false,
     };
 
     if (canSendEmail()) {
-      const sent = await sendFeedbackEmail({
-        message: entry.message,
-        location: entry.location,
-        timestamp: entry.timestamp,
-      });
-      entry.emailSent = sent;
+      const [notified, autoReplied] = await Promise.all([
+        sendAdminNotification({
+          message: entry.message,
+          userEmail: entry.userEmail,
+          location: entry.location,
+          timestamp: entry.timestamp,
+        }),
+        sendAutoReply({
+          to_email: entry.userEmail,
+          message: entry.message,
+          location: entry.location,
+        }),
+      ]);
+      entry.notified = notified;
+      entry.autoReplied = autoReplied;
     }
 
     const updated = [...observations, entry];
     setObservations(updated);
     localStorage.setItem('auralis-observations', JSON.stringify(updated));
     setFeedback('');
+    setFeedbackEmail('');
 
-    if (entry.emailSent) {
-      showNotification('Observation relayed to sentinel command.', 'success');
-    } else if (canSendEmail()) {
-      showNotification('Observation recorded. Email relay unavailable.', 'info');
+    if (entry.notified && entry.autoReplied) {
+      showNotification('Thank you for your observation! A confirmation has been sent to your email.', 'success');
     } else {
-      showNotification('Observation submitted to the sentinel network.');
+      showNotification('Thank you for your observation!', 'success');
+    }
+  };
+
+  const handleAdminOpen = () => {
+    if (isAdmin) {
+      setShowAdmin(true);
+    } else {
+      setShowAdminLogin(true);
+      setAdminPasswordInput('');
+    }
+  };
+
+  const handleAdminLogin = () => {
+    if (adminPasswordInput === ADMIN_SECRET) {
+      setIsAdmin(true);
+      sessionStorage.setItem('auralis-admin', 'true');
+      setShowAdminLogin(false);
+      setShowAdmin(true);
+      showNotification('Admin access granted.', 'success');
+    } else {
+      showNotification('Invalid admin credentials.', 'info');
     }
   };
 
@@ -234,10 +271,57 @@ export default function App() {
       <RiskBanner risk={data.risk} locationName={data.locationName} />
       <DiagnosticModal open={showDiagnostic} locationName={data.locationName} onClose={() => setShowDiagnostic(false)} />
       <AdminModal open={showAdmin} observations={observations} onClose={() => setShowAdmin(false)} onClear={() => { setObservations([]); localStorage.removeItem('auralis-observations'); showNotification('Observation archive purged.', 'info'); }} />
+      <AnimatePresence>
+        {showAdminLogin && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[130] flex items-center justify-center p-6 bg-accent/95 backdrop-blur-3xl"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Admin Login"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              className="max-w-md w-full bg-bg border border-white/20 rounded-[3rem] p-8 md:p-12 space-y-8 shadow-[0_40px_80px_rgba(0,0,0,0.6)]"
+            >
+              <div className="space-y-2">
+                <h2 className="text-2xl font-serif text-accent uppercase tracking-tight">Admin Access</h2>
+                <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Enter passcode to continue</p>
+              </div>
+              <input
+                type="password"
+                value={adminPasswordInput}
+                onChange={(e) => setAdminPasswordInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleAdminLogin(); }}
+                placeholder="Passcode"
+                className="w-full bg-surface border border-border/40 rounded-2xl p-5 outline-none focus:ring-4 focus:ring-accent/5 focus:border-accent/30 transition-all font-medium text-text placeholder:text-text-muted/50"
+                autoFocus
+              />
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setShowAdminLogin(false)}
+                  className="flex-1 py-4 border border-border/40 text-text-muted rounded-xl text-[10px] uppercase font-bold tracking-widest hover:bg-surface transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAdminLogin}
+                  className="flex-1 py-4 bg-accent text-white rounded-xl text-[10px] uppercase font-bold tracking-widest hover:bg-accent-light transition-all cursor-pointer"
+                >
+                  Authenticate
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <NotificationToast notification={notification} onDismiss={clearNotification} />
       <div className="fixed inset-0 bg-texture pointer-events-none opacity-[0.03]" aria-hidden="true" />
 
-      <Navbar isLoggedIn={isLoggedIn} onLogin={startLoginSequence} onLogout={handleLogout} onAdminOpen={() => setShowAdmin(true)} />
+      <Navbar isLoggedIn={isLoggedIn} isAdmin={isAdmin} onLogin={startLoginSequence} onLogout={handleLogout} onAdminOpen={handleAdminOpen} />
       <NetworkStatusBanner />
 
       {/* Hero */}
@@ -781,15 +865,28 @@ export default function App() {
               </div>
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-                  <div className="space-y-2">
-                    <label htmlFor="feedback-input" className="text-[10px] uppercase font-bold text-text-muted tracking-widest ml-4">Verification Input</label>
-                    <textarea
-                      id="feedback-input"
-                      value={feedback}
-                      onChange={(e) => setFeedback(e.target.value)}
-                      placeholder="Is this prediction accurate for your locale?"
-                      className="w-full bg-surface border border-border/40 rounded-2xl p-6 h-40 outline-none focus:ring-4 focus:ring-accent/5 focus:border-accent/30 transition-all font-medium text-text placeholder:text-text-muted/50 resize-none"
-                    />
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label htmlFor="feedback-input" className="text-[10px] uppercase font-bold text-text-muted tracking-widest ml-4">Verification Input</label>
+                      <textarea
+                        id="feedback-input"
+                        value={feedback}
+                        onChange={(e) => setFeedback(e.target.value)}
+                        placeholder="Is this prediction accurate for your locale?"
+                        className="w-full bg-surface border border-border/40 rounded-2xl p-6 h-28 outline-none focus:ring-4 focus:ring-accent/5 focus:border-accent/30 transition-all font-medium text-text placeholder:text-text-muted/50 resize-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="feedback-email" className="text-[10px] uppercase font-bold text-text-muted tracking-widest ml-4">Your Email</label>
+                      <input
+                        id="feedback-email"
+                        type="email"
+                        value={feedbackEmail}
+                        onChange={(e) => setFeedbackEmail(e.target.value)}
+                        placeholder="you@example.com"
+                        className="w-full bg-surface border border-border/40 rounded-2xl p-5 outline-none focus:ring-4 focus:ring-accent/5 focus:border-accent/30 transition-all font-medium text-text placeholder:text-text-muted/50"
+                      />
+                    </div>
                   </div>
                   <div className="flex flex-col justify-end space-y-6">
                     <div className="p-8 bg-surface rounded-2xl border border-border/40 space-y-4">
