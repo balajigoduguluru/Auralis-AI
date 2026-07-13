@@ -1,198 +1,238 @@
-<div align="center">
-  <br/>
-  <img src="https://img.shields.io/badge/status-production-1B4332?style=for-the-badge&labelColor=0a0a0a" alt="Production Ready"/>
-  <img src="https://img.shields.io/badge/license-MIT-1B4332?style=for-the-badge&labelColor=0a0a0a" alt="MIT License"/>
-  <br/><br/>
-  <h1 align="center" style="border-bottom: none; font-size: 3.5rem; font-weight: 800; letter-spacing: -2px;">
-    AURALIS <span style="font-weight: 300; font-style: italic; opacity: 0.6;">AI</span>
-  </h1>
-  <p align="center" style="font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
-    Environmental Intelligence &bull; Climate Risk Analytics &bull; Agentic AI
-  </p>
-  <br/>
-</div>
+# Auralis AI — Environmental Intelligence Platform
 
----
+![CI](https://github.com/balajigoduguluru/auralis-ai/actions/workflows/ci.yml/badge.svg)
 
-## Enterprise Capabilities
+> **Advanced climate diagnostics and environmental risk modeling.** Powered by the Auralis Agentic Framework.
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Frontend** | React 19 + TypeScript + Vite 6 | High-throughput SPA with sub-second hydration |
-| **Styling** | Tailwind CSS v4 + Motion | Reactive design system with GPU-accelerated transitions |
-| **AI Engine** | Google Gemini 2.0 Flash | Real-time environmental narrative generation |
-| **Telemetry** | Open-Meteo API | Live weather data ingestion across 10+ metrics |
-| **Maps** | Google Maps Embed + Leaflet | Geospatial visualization and coordinate intercept |
-| **Charts** | Recharts | Multi-variant area/chart analytics with 24H/7D windows |
-| **Email** | EmailJS | Client-side email dispatch for observation notifications |
-| **Persistence** | Browser localStorage | User observation storage across sessions |
+![Auralis AI Hero](screenshots/01-hero.png)
 
-### Core Differentiators
+## Overview
 
-- **Agentic AI Pipeline** &mdash; Asynchronous Gemini inference with automatic fallback to cached heuristics ensures zero-burst failures.
-- **Real-Time Telemetry** &mdash; Open-Meteo integration streams temperature, humidity, wind, pressure, UV, and precipitation on every query.
-- **Geospatial Intercept** &mdash; Click-to-analyze anywhere on the map; coordinates are resolved via reverse geocoding and immediately processed.
-- **Predictive Timeline** &mdash; Risk-propagated forward projection across 4, 8, 12, and 24-hour windows.
-- **Multi-Spectral Imaging** &mdash; Live image aggregation from Wikipedia/Wikimedia Commons for every scanned location.
-- **Sentinel Auth Theater** &mdash; Immersive satellite-login UX demonstrating secured-node handshake patterns.
-- **Community Observation Submission** &mdash; Users enter their email and observation; submissions trigger an admin notification and an auto-reply confirmation email.
-- **Admin Observation Panel** &mdash; Password-protected view of all community submissions with dual email delivery status (Notified / Replied) and bulk purge.
+Auralis AI is a full-stack environmental intelligence platform that combines real-time weather telemetry, satellite imagery, AI-generated risk assessments, and community-driven observation verification. Built with React 19, TypeScript, and modern web technologies.
 
----
+### Key Features
 
-## Architecture & Data Flow
+- 🌍 **Geospatial Intelligence** — Interactive Leaflet maps with real-time risk overlays
+- 🛰️ **Multi-Spectral Satellite Confirmation** — Live visual verification of climate signatures
+- 📊 **Variance Analytics** — Recharts-powered climate signature visualization (24h/7d)
+- 🤖 **AI Risk Engine** — Google GenAI (Gemini) generated environmental reports
+- 📈 **Predictive Timeline** — 4h/8h/12h/24h forecast projections with confidence scoring
+- 👥 **Community Verification** — Crowdsourced observations with EmailJS notifications
+- 🔐 **Admin Panel** — Password-protected observation archive with email audit trail
+- ♿ **Accessibility First** — Semantic HTML, ARIA labels, reduced-motion support
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        Browser (SPA)                        │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────────┐  │
-│  │  Navbar  │  │   Hero   │  │   Map    │  │  Analytics  │  │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └──────┬─────┘  │
-│       └──────────────┼─────────────┼────────────────┘        │
-│                      ▼             ▼                         │
-│            ┌────────────────────────────┐                    │
-│            │     useNotifications()     │                    │
-│            │         useAuth()          │                    │
-│            └────────────┬───────────────┘                    │
-└─────────────────────────┼────────────────────────────────────┘
-                          │
-                          ▼
-┌──────────────────────────────────────────────────────────────┐
-│                      Service Layer                           │
-│  ┌────────────────────┐  ┌────────────────────────────────┐  │
-│  │   weatherService   │  │         geminiService          │  │
-│  │   Open-Meteo API   │  │   Google GenAI SDK (Gemini)    │  │
-│  └─────────┬──────────┘  └──────────────┬─────────────────┘  │
-│            │                            │                    │
-│            ▼                            ▼                    │
-│    open-meteo.com              generativeai.googleapis.com   │
-│                                                              │
-│  ┌─────────────────────────────────────────────────────────┐  │
-│  │                  emailService                            │  │
-│  │              EmailJS (client-side)                       │  │
-│  └──────────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────┘
-```
+## Screenshots
 
-**Request flow:**
-1. User submits a location &rarr; `weatherService.fetchWeather()` fetches live data from Open-Meteo
-2. Risk engine calculates severity from temperature, wind, and precipitation thresholds
-3. `geminiService.generateEnvironmentalReport()` streams an AI narrative via Gemini 2.0 Flash
-4. State is committed: metrics, charts, logs, predictions, and imagery all update simultaneously
-5. Map intercept (click) flows through the same pipeline via `fetchWeatherByCoords()`
+| Section | Preview |
+|---------|---------|
+| **Hero & Telemetry Search** | ![Hero](screenshots/01-hero.png) |
+| **Geospatial Map** | ![Map](screenshots/02-map.png) |
+| **Satellite Imagery** | ![Satellite](screenshots/03-satellite.png) |
+| **Climate Analytics** | ![Analytics](screenshots/04-analytics.png) |
+| **Live Dashboard** | ![Dashboard](screenshots/05-dashboard.png) |
+| **Predictive Timeline** | ![Predictive](screenshots/06-predictive.png) |
+| **Community Feedback** | ![Community](screenshots/07-community.png) |
+| **Search: Tokyo** | ![Search Tokyo](screenshots/09-search-tokyo.png) |
+| **Feedback Submission** | ![Feedback](screenshots/10-feedback.png) |
 
----
+<details>
+<summary>View full-page screenshot</summary>
 
-## Local Provisioning
+![Full Page](screenshots/08-full-page.png)
+
+</details>
+
+## Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| **Framework** | React 19 + TypeScript 5 |
+| **Build** | Vite 6 |
+| **Styling** | Tailwind CSS 4 (CSS-first config) |
+| **Animation** | Motion (Framer Motion 12) |
+| **Charts** | Recharts 3 |
+| **Maps** | Leaflet 1.9 + React-Leaflet 5 |
+| **AI/ML** | `@google/genai` (Gemini) |
+| **Weather** | OpenWeatherMap API |
+| **Email** | EmailJS Browser SDK |
+| **Icons** | Lucide React |
+| **Utils** | Canvas Confetti |
+
+## Quick Start
 
 ### Prerequisites
 
-| Tool | Version | Notes |
-|------|---------|-------|
-| Node.js | &ge;18 | Required for Vite 6 and React 19 |
-| npm | &ge;9 | Ships with Node.js |
+- Node.js ≥ 18
+- npm ≥ 9
 
-### Setup
+### Installation
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/<your-org>/auralis-ai.git
+# Clone
+git clone https://github.com/balajigoduguluru/auralis-ai.git
 cd auralis-ai
 
-# 2. Create and activate a clean environment
-#    (Node.js equivalent of Python venv isolation)
-npm ci                   # Clean install from lockfile
+# Install dependencies
+npm ci
 
-# 3. Configure environment variables
+# Configure environment
 cp .env.example .env.local
-# Edit .env.local and set your GEMINI_API_KEY
+# Edit .env.local with your API keys
 
-# 4. Start the development engine
+# Start development server
 npm run dev
 ```
 
-The application is now available at **`http://localhost:3000`**.
+Visit `http://localhost:3000`
 
-### Validation Commands
+### Environment Variables
 
-```bash
-# TypeScript compilation check (no emit)
-npm run lint
+Create `.env.local`:
 
-# Production build
-npm run build
+```env
+# Required
+VITE_OPENWEATHER_API_KEY=your_openweathermap_key
+VITE_GEMINI_API_KEY=your_google_genai_key
 
-# Preview production build locally
-npm run preview
+# Optional (EmailJS - enables notifications)
+VITE_EMAILJS_SERVICE_ID=your_service_id
+VITE_EMAILJS_NOTIFICATION_TEMPLATE_ID=your_notification_template
+VITE_EMAILJS_AUTOREPLY_TEMPLATE_ID=your_autoreply_template
+VITE_EMAILJS_PUBLIC_KEY=your_public_key
 
-# Clean build artifacts
-npm run clean
+# Admin panel password (stored in sessionStorage)
+VITE_ADMIN_SECRET=your_secure_password
 ```
 
----
+> **Note:** The app degrades gracefully without EmailJS — observations are stored locally and logged to console.
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Dev server on port 3000 (network accessible) |
+| `npm run build` | Production build to `dist/` |
+| `npm run preview` | Preview production build locally |
+| `npm run lint` | TypeScript type-check (no emit) |
+| `npm run typecheck` | Alias for lint |
+| `npm run test` | Placeholder for test runner |
+| `npm run clean` | Remove `dist/` directory |
 
 ## Project Structure
 
 ```
-auralis-ai/
-├── .github/workflows/ci.yml    # CI/CD pipeline
-├── public/                      # Static assets
-├── src/
-│   ├── components/              # UI components
-│   │   ├── AdminModal.tsx       # Admin observation panel
-│   │   ├── AuthModal.tsx        # Satellite login theater
-│   │   ├── DiagnosticModal.tsx  # AI diagnostics panel
-│   │   ├── Footer.tsx           # App footer with links
-│   │   ├── LiveImages.tsx       # Wikipedia-sourced imagery
-│   │   ├── MapVisualization.tsx # Google Maps + Leaflet
-│   │   ├── Navbar.tsx           # Navigation (desktop + mobile)
-│   │   ├── NetworkStatus.tsx    # Online/offline banner
-│   │   ├── NotificationToast.tsx# Toast notifications
-│   │   ├── RiskBanner.tsx       # High-risk alert bar
-│   │   ├── Schematic.tsx        # Animated SVG topology
-│   │   └── WeatherWatcher.tsx   # Alert subscription sidebar
-│   ├── hooks/                   # Custom React hooks
-│   │   ├── useAuth.ts           # Auth state machine
-│   │   └── useNotifications.ts  # Notification queue
-│   ├── services/                # API service layer
-│   │   ├── emailService.ts      # EmailJS integration
-│   │   ├── geminiService.ts     # Google GenAI client
-│   │   └── weatherService.ts    # Open-Meteo client
-│   ├── types/                   # TypeScript type definitions
-│   │   └── index.ts
-│   ├── App.tsx                  # Root application component
-│   ├── index.css                # Tailwind + global styles
-│   └── main.tsx                 # React entry point
-├── .env.example                 # Environment configuration
-├── .gitignore                   # Version control exclusions
-├── CONTRIBUTING.md              # Contribution guidelines
-├── CHANGELOG.md                 # Version history
-├── package.json                 # Dependency manifest
-├── tsconfig.json                # TypeScript configuration
-├── USER_GUIDE.md                # Comprehensive user documentation
-└── vite.config.ts               # Vite build configuration
+src/
+├── components/          # React components (UI + Logic)
+│   ├── AdminModal.tsx       # Admin observation panel
+│   ├── AuthModal.tsx        # Authentication flow
+│   ├── DiagnosticModal.tsx  # Technical diagnostics
+│   ├── Footer.tsx           # Site footer
+│   ├── LiveImages.tsx       # Satellite imagery
+│   ├── MapVisualization.tsx # Leaflet map integration
+│   ├── Navbar.tsx           # Navigation + auth
+│   ├── NetworkStatus.tsx    # Connection monitor
+│   ├── NotificationToast.tsx# Toast notifications
+│   ├── RiskBanner.tsx       # Risk level indicator
+│   ├── Schematic.tsx        # Animated SVG schematic
+│   ├── WeatherWatcher.tsx   # Weather alerts
+│   └── ...
+├── hooks/               # Custom React hooks
+│   ├── useAuth.ts           # Authentication state
+│   └── useNotifications.ts  # Toast notification system
+├── services/            # External API integrations
+│   ├── emailService.ts      # EmailJS admin/user notifications
+│   ├── geminiService.ts     # Google GenAI environmental reports
+│   └── weatherService.ts    # OpenWeatherMap integration
+├── types/               # TypeScript definitions
+│   └── index.ts             # Core type definitions
+├── App.tsx              # Root application component
+├── main.tsx             # Entry point
+└── index.css            # Tailwind v4 + custom theme
 ```
 
----
+## Architecture Highlights
 
-## Documentation
+### Risk Calculation Engine
 
-For a complete walkthrough of all features, including the Admin Panel, Observation Submission, EmailJS setup, and every user-facing component, see the **[USER_GUIDE.md](./USER_GUIDE.md)**.
+```typescript
+function calculateRisk(temp: number, windSpeed: number, precipitation: number): 'HIGH' | 'MODERATE' | 'LOW' {
+  if (temp > 38 || windSpeed > 60 || precipitation > 50) return 'HIGH';
+  if (temp > 30 || windSpeed > 40) return 'MODERATE';
+  return 'LOW';
+}
+```
 
----
+### AI Report Generation
 
-## Security & Compliance
+Uses Google GenAI (Gemini) to synthesize environmental reports from raw telemetry:
 
-- **API keys** are injected at build time via Vite `define` and never stored in the bundle as plaintext constants.
-- **CORS** is enforced by the upstream APIs (Open-Meteo, Google Maps, Wikipedia).
-- **Content Security Policy** is configurable via the hosting platform.
-- **No user data** is persisted server-side; all state is client-local.
+```typescript
+const report = await generateEnvironmentalReport(location, {
+  temp: weather.temp,
+  humidity: weather.humidity,
+  windSpeed: weather.windSpeed,
+  risk: calculatedRisk,
+});
+```
+
+### Data Flow
+
+```
+User Input → Weather API → Risk Calculation → Gemini AI → State Update → UI Render
+                    ↓
+            Community Feedback → EmailJS → Admin Notification + Auto-Reply
+```
+
+## Deployment
+
+### Static Hosting (Recommended)
+
+```bash
+npm run build
+# Deploy dist/ to Vercel, Netlify, Cloudflare Pages, etc.
+```
+
+### Docker
+
+```dockerfile
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+## Contributing
+
+We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) before submitting.
+
+### Quick Contribution Flow
+
+1. Fork the repo
+2. Create a feature branch: `git checkout -b feat/amazing-feature`
+3. Make changes with tests
+4. Run type-check: `npm run typecheck`
+5. Commit with conventional commits: `git commit -m "feat: add amazing feature"`
+6. Push and open a Pull Request
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+## Author
+
+**Balaji Goduguluru**  
+🔗 [GitHub](https://github.com/balajigoduguluru) • [LinkedIn](https://linkedin.com/in/balajigoduguluru)
 
 ---
 
 <div align="center">
-  <br/>
-  <sub>Built with React 19, TypeScript, Vite 6, and Google Gemini.</sub>
-  <br/>
-  <sub>&copy; 2026 Developed by Balaji Goduguluru</sub>
+  <sub>Built with ❤️ for environmental intelligence</sub>
 </div>

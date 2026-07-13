@@ -2,20 +2,28 @@ module.exports = {
   env: {
     browser: true,
     es2022: true,
+    node: true,
   },
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 2022,
+    sourceType: 'module',
+    project: './tsconfig.json',
+  },
+  plugins: ['@typescript-eslint', 'react', 'react-hooks', 'prettier'],
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
   ],
-  parser: '@typescript-eslint/parser',
-  parserOptions: {
-    ecmaFeatures: { jsx: true },
-    ecmaVersion: 'latest',
-    sourceType: 'module',
+  rules: {
+    // Add custom rules here
+    'prettier/prettier': ['error'],
   },
-  plugins: ['react', '@typescript-eslint'],
-  settings: { react: { version: 'detect' } },
-  rules: {},
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
 };

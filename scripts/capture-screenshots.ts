@@ -31,8 +31,8 @@ async function waitForServer(url: string, timeoutMs = 15000): Promise<void> {
 }
 
 async function run() {
-  // Ensure screenshots folder exists
-  const screenshotsDir = path.resolve(__dirname, '..', 'screenshots');
+  // Ensure screenshots folder exists (relative to project root).
+  const screenshotsDir = path.resolve('screenshots');
   fs.mkdirSync(screenshotsDir, { recursive: true });
 
   // Start Vite dev server as a background process
