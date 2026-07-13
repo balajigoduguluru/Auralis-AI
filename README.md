@@ -234,5 +234,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 ---
 
 <div align="center">
-  <sub>Built with ❤️ for environmental intelligence</sub>
+  <sub>Built By Balaji Goduguluru 
+    for environmental intelligence</sub>
 </div>
