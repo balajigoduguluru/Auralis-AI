@@ -4,7 +4,7 @@ import {
   Search, Activity, FileCode, ShieldCheck, ArrowRight, Thermometer, Droplets,
   Wind, Navigation, Gauge, Eye, Sun, CloudRain, Zap, ArrowUpRight, AlertTriangle,
   Info, Clock, ChevronRight, TrendingUp, MapPin, Globe, Leaf, Plus, Minus,
-  Share2, MessageSquare, Github,
+  Share2, MessageSquare, Lock,
 } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -287,9 +287,14 @@ export default function App() {
               animate={{ scale: 1, y: 0 }}
               className="max-w-md w-full bg-bg border border-white/20 rounded-[3rem] p-8 md:p-12 space-y-8 shadow-[0_40px_80px_rgba(0,0,0,0.6)]"
             >
-              <div className="space-y-2">
-                <h2 className="text-2xl font-serif text-accent uppercase tracking-tight">Admin Access</h2>
-                <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Enter passcode to continue</p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center text-accent">
+                  <Lock className="w-6 h-6" aria-hidden="true" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-serif text-accent uppercase tracking-tight">Admin Access</h2>
+                  <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Enter passcode to continue</p>
+                </div>
               </div>
               <input
                 type="password"
@@ -321,7 +326,7 @@ export default function App() {
       <NotificationToast notification={notification} onDismiss={clearNotification} />
       <div className="fixed inset-0 bg-texture pointer-events-none opacity-[0.03]" aria-hidden="true" />
 
-      <Navbar isLoggedIn={isLoggedIn} isAdmin={isAdmin} onLogin={startLoginSequence} onLogout={handleLogout} onAdminOpen={handleAdminOpen} />
+      <Navbar isLoggedIn={isLoggedIn} onLogin={startLoginSequence} onLogout={handleLogout} onAdminOpen={handleAdminOpen} />
       <NetworkStatusBanner />
 
       {/* Hero */}

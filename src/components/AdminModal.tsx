@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Lock, X, Trash2, MessageSquare, MapPin, Clock, Mail } from 'lucide-react';
+import { Lock, X, Trash2, MessageSquare, MapPin, Clock, Mail, AtSign } from 'lucide-react';
 import type { FeedbackEntry } from '../types';
 
 interface AdminModalProps {
@@ -98,14 +98,12 @@ export default function AdminModal({ open, observations, onClose, onClear }: Adm
                         {entry.location}
                       </span>
                       <span className="flex items-center gap-2 text-text-muted/70">
-                        <Mail className="w-3 h-3" aria-hidden="true" />
+                        <AtSign className="w-3 h-3" aria-hidden="true" />
                         {entry.userEmail}
                       </span>
                       <span className={`flex items-center gap-2 ${entry.notified && entry.autoReplied ? 'text-success' : 'text-warning'}`}>
                         <Mail className="w-3 h-3" aria-hidden="true" />
-                        {entry.notified ? 'Notified' : 'Pending'}
-                        {' / '}
-                        {entry.autoReplied ? 'Replied' : 'Pending'}
+                        {entry.notified ? 'Notified' : 'Pending'} / {entry.autoReplied ? 'Replied' : 'Pending'}
                       </span>
                     </div>
                   </motion.div>

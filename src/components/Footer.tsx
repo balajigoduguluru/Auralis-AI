@@ -1,4 +1,4 @@
-import { Zap, Github, ChevronRight, ArrowRight } from 'lucide-react';
+import { Zap, ChevronRight, ArrowRight } from 'lucide-react';
 import Schematic from './Schematic';
 import NetworkStatusBanner from './NetworkStatus';
 
@@ -48,15 +48,6 @@ export default function Footer({ showNotification }: FooterProps) {
             >
               Agent Ethics
             </button>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:opacity-100 transition-opacity underline underline-offset-8 flex items-center gap-2"
-            >
-              <Github className="w-3 h-3" aria-hidden="true" />
-              Repository
-            </a>
           </div>
         </div>
 

@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Zap, Github, ShieldCheck, ArrowRight, Menu, X, Lock } from 'lucide-react';
+import { Zap, ShieldCheck, ArrowRight, Menu, X, Lock } from 'lucide-react';
 
 interface NavbarProps {
   isLoggedIn: boolean;
-  isAdmin: boolean;
   onLogin: () => void;
   onLogout: () => void;
   onAdminOpen: () => void;
 }
 
-export default function Navbar({ isLoggedIn, isAdmin, onLogin, onLogout, onAdminOpen }: NavbarProps) {
+export default function Navbar({ isLoggedIn, onLogin, onLogout, onAdminOpen }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
@@ -60,19 +59,10 @@ export default function Navbar({ isLoggedIn, isAdmin, onLogin, onLogout, onAdmin
               {link.label}
             </a>
           ))}
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 hover:text-accent transition-colors"
-          >
-            <Github className="w-4 h-4" aria-hidden="true" />
-            Source
-          </a>
         </div>
 
         <div className="flex items-center gap-4">
-          {isAdmin && (
+          {isLoggedIn && (
             <button
               onClick={onAdminOpen}
               className="hidden md:flex items-center gap-2 group text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-accent transition-colors cursor-pointer"
@@ -123,16 +113,7 @@ export default function Navbar({ isLoggedIn, isAdmin, onLogin, onLogout, onAdmin
                   {link.label}
                 </a>
               ))}
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.2em] text-text-muted/80 hover:text-accent transition-colors py-2"
-              >
-                <Github className="w-4 h-4" aria-hidden="true" />
-                Source
-              </a>
-              {isAdmin && (
+              {isLoggedIn && (
                 <button
                   onClick={() => { setMobileOpen(false); onAdminOpen(); }}
                   className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-text-muted hover:text-accent transition-colors py-2 cursor-pointer"
