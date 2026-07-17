@@ -3,7 +3,7 @@ import type { Notification, NotificationType } from '../types';
 
 export function useNotifications() {
   const [notification, setNotification] = useState<Notification | null>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showNotification = useCallback((message: string, type: NotificationType = 'success') => {
     if (timerRef.current) clearTimeout(timerRef.current);

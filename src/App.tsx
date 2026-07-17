@@ -1,7 +1,7 @@
-import { useState, useEffect, type FormEvent, type ReactNode } from 'react';
+import { useState, useEffect, lazy, Suspense, type FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  Search, Activity, FileCode, ShieldCheck, ArrowRight, Thermometer, Droplets,
+  Search, Activity, ShieldCheck, ArrowRight, Thermometer, Droplets,
   Wind, Navigation, Gauge, Eye, Sun, CloudRain, Zap, ArrowUpRight, AlertTriangle,
   Info, Clock, ChevronRight, TrendingUp, MapPin, Globe, Leaf, Plus, Minus,
   Share2, MessageSquare, Lock,
@@ -12,68 +12,35 @@ import {
 } from 'recharts';
 import { fetchWeather, fetchWeatherByCoords } from './services/weatherService';
 import { generateEnvironmentalReport, hasApiKey } from './services/geminiService';
-import MapVisualization from './components/MapVisualization';
 import NetworkStatusBanner from './components/NetworkStatus';
-import LiveImages from './components/LiveImages';
-import ClimateNewsFeed from './components/ClimateNewsFeed';
-import Schematic from './components/Schematic';
 import WeatherWatcher from './components/WeatherWatcher';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import AuthModal from './components/AuthModal';
-import DiagnosticModal from './components/DiagnosticModal';
 import NotificationToast from './components/NotificationToast';
 import RiskBanner from './components/RiskBanner';
 
+const MapVisualization = lazy(() => import('./components/MapVisualization'));
+const LiveImages = lazy(() => import('./components/LiveImages'));
+const Schematic = lazy(() => import('./components/Schematic'));
+const AuthModal = lazy(() => import('./components/AuthModal'));
+const DiagnosticModal = lazy(() => import('./components/DiagnosticModal'));
+const AdminModal = lazy(() => import('./components/AdminModal'));
+
 import { useNotifications } from './hooks/useNotifications';
 import { useAuth } from './hooks/useAuth';
-import type { HistoryEntry, Prediction, LogEntry, MetricFilter, FeedbackEntry } from './types';
+import MetricModule from './components/ui/MetricModule';
+import { calculateRisk, generatePredictions } from './utils/risk';
+import { csvExport } from './utils/csv';
+import {
+  INITIAL_HISTORY, INITIAL_LOGS, INITIAL_PREDICTIONS, INITIAL_DATA,
+} from './config/constants';
+import type { HistoryEntry, Prediction, LogEntry, MetricFilter, FeedbackEntry, AppData } from './types';
 import { sendAdminNotification, sendAutoReply, canSendEmail } from './services/emailService';
-import AdminModal from './components/AdminModal';
+import HeroSection from './pages/HeroSection';
 
-function calculateRisk(temp: number, windSpeed: number, precipitation: number): 'HIGH' | 'MODERATE' | 'LOW' {
-  if (temp > 38 || windSpeed > 60 || precipitation > 50) return 'HIGH';
-  if (temp > 30 || windSpeed > 40) return 'MODERATE';
-  return 'LOW';
-}
+const initialHistory: HistoryEntry[] = INITIAL_HISTORY;
 
-function generatePredictions(risk: 'HIGH' | 'MODERATE' | 'LOW'): Prediction[] {
-  const risks: ('HIGH' | 'MODERATE' | 'LOW')[] = ['LOW', 'MODERATE', 'HIGH'];
-  return [
-    { time: '+4h', risk: risk === 'HIGH' ? risks[Math.floor(Math.random() * 3)] : risks[Math.floor(Math.random() * 2)], label: risk === 'HIGH' ? 'Monitoring' : 'Normalizing' },
-    { time: '+8h', risk: risks[Math.floor(Math.random() * 2)], label: 'Stabilizing' },
-    { time: '+12h', risk: risks[Math.floor(Math.random() * 3)], label: 'Projected' },
-    { time: '+24h', risk: risks[0], label: 'Clearance' },
-  ];
-}
-
-function csvExport(history: HistoryEntry[]) {
-  const headers = ['Time', 'Date', 'Temperature (°C)', 'Humidity (%)', 'Wind Speed (km/h)', 'Pressure (hPa)', 'Rainfall (mm)'];
-  const rows = history.map(e => [e.time, e.date, e.temp, e.humidity, e.windSpeed, e.pressure, e.rainfall].join(','));
-  const csv = [headers.join(','), ...rows].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `auralis-telemetry-${new Date().toISOString().slice(0, 10)}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-const initialHistory: HistoryEntry[] = [
-  { time: '00:00', date: 'Jul 7', temp: 15, humidity: 70, windSpeed: 0, pressure: 1013, rainfall: 0 },
-  { time: '04:00', date: 'Jul 7', temp: 14, humidity: 75, windSpeed: 0, pressure: 1013, rainfall: 0.5 },
-  { time: '08:00', date: 'Jul 7', temp: 17, humidity: 65, windSpeed: 0, pressure: 1013, rainfall: 0.2 },
-  { time: '12:00', date: 'Jul 7', temp: 22, humidity: 55, windSpeed: 0, pressure: 1013, rainfall: 0 },
-  { time: '16:00', date: 'Jul 7', temp: 20, humidity: 60, windSpeed: 0, pressure: 1013, rainfall: 0 },
-  { time: '20:00', date: 'Jul 7', temp: 16, humidity: 68, windSpeed: 0, pressure: 1013, rainfall: 0.1 },
-];
-
-const initialLogs: LogEntry[] = [
-  { time: '12:45', title: 'Atmospheric Signature Sync', desc: 'Complete pulse analysis confirmed with ground sensors.' },
-  { time: '11:20', title: 'Satellite-8 Connection', desc: 'Secure connection established. Telemetry stream stable.' },
-  { time: '09:00', title: 'System Boot Sequence', desc: 'Integrity check passed. 12,480 nodes reporting.' },
-];
+const initialLogs: LogEntry[] = INITIAL_LOGS;
 
 export default function App() {
   const { notification, showNotification, clearNotification } = useNotifications();
@@ -103,9 +70,9 @@ export default function App() {
   const [mapZoom, setMapZoom] = useState(14);
   const [liveImagesLocation, setLiveImagesLocation] = useState('Initialize Node');
 
-  const [data, setData] = useState({
+  const [data, setData] = useState<AppData>({
     temp: 0, humidity: 0, rainfall: 0, windSpeed: 0, windDirection: 0,
-    pressure: 0, visibility: 0, uvIndex: 0, risk: 'PENDING' as string,
+    pressure: 0, visibility: 0, uvIndex: 0, risk: 'PENDING' as AppData['risk'],
     recommendation: 'Awaiting sentinel link for real-time telemetry.',
     lastUpdate: 'System Cold-Start', coordinates: 'Calculating...',
     lat: 48.8566, lon: 2.3522, locationName: '',
@@ -269,10 +236,16 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-bg text-text relative overflow-x-hidden selection:bg-accent/10 motion-reduce:*:transition-none motion-reduce:*:animate-none">
-      <AuthModal open={showLoginModal} step={loginStep} onAbort={abortLogin} />
+      <Suspense fallback={null}>
+        <AuthModal open={showLoginModal} step={loginStep} onAbort={abortLogin} />
+      </Suspense>
       <RiskBanner risk={data.risk} locationName={data.locationName} />
-      <DiagnosticModal open={showDiagnostic} locationName={data.locationName} onClose={() => setShowDiagnostic(false)} />
-      <AdminModal open={showAdmin} observations={observations} onClose={() => setShowAdmin(false)} onClear={() => { setObservations([]); localStorage.removeItem('auralis-observations'); showNotification('Observation archive purged.', 'info'); }} />
+      <Suspense fallback={null}>
+        <DiagnosticModal open={showDiagnostic} locationName={data.locationName} onClose={() => setShowDiagnostic(false)} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <AdminModal open={showAdmin} observations={observations} onClose={() => setShowAdmin(false)} onClear={() => { setObservations([]); localStorage.removeItem('auralis-observations'); showNotification('Observation archive purged.', 'info'); }} />
+      </Suspense>
       <AnimatePresence>
         {showAdminLogin && (
           <motion.div
@@ -331,84 +304,13 @@ export default function App() {
       <Navbar isLoggedIn={isLoggedIn} onLogin={startLoginSequence} onLogout={handleLogout} onAdminOpen={handleAdminOpen} />
       <NetworkStatusBanner />
 
-      {/* Hero */}
-      <section className="pt-40 pb-24 px-6 md:px-12 relative" id="monitoring">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="space-y-8 relative">
-            <motion.div
-              animate={{ top: ['0%', '100%'] }}
-              transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-              className="absolute left-[-2rem] w-[1px] h-full bg-gradient-to-b from-transparent via-accent/30 to-transparent opacity-40 pointer-events-none motion-reduce:animate-none"
-              aria-hidden="true"
-            />
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/5 rounded-full border border-accent/10 text-[10px] font-black text-accent tracking-[0.25em] uppercase">
-              <Activity className="w-4 h-4 animate-pulse motion-reduce:animate-none" aria-hidden="true" />
-              Auralis Engine v2.0 Online
-            </div>
-            <h1 className="text-6xl md:text-9xl font-serif leading-[0.9] tracking-tighter text-accent">
-              Intelligence <br /> <span className="text-text-muted/50 italic">Unbound.</span>
-            </h1>
-            <p className="text-xl md:text-2xl font-medium text-text-muted leading-relaxed max-w-xl">
-              Advanced climate diagnostics and environmental risk modeling. Powered by the Auralis Agentic Framework.
-            </p>
-
-            <form onSubmit={runAnalysis} className="pt-8 max-w-md relative group" role="search" aria-label="Location search">
-              <input
-                type="text"
-                placeholder="Scan localized coordinates..."
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="input-earth shadow-2xl shadow-accent/5 focus:ring-accent/20"
-                aria-label="City or coordinates"
-              />
-              <button
-                type="submit"
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-accent text-white rounded-lg flex items-center justify-center hover:bg-accent-light transition-colors shadow-lg active:scale-95 disabled:opacity-50 cursor-pointer"
-                disabled={isAnalyzing}
-                aria-label={isAnalyzing ? 'Analyzing...' : 'Search'}
-              >
-                {isAnalyzing ? <Activity className="w-5 h-5 animate-spin motion-reduce:animate-none" /> : <Search className="w-5 h-5" />}
-              </button>
-            </form>
-
-            <div className="flex items-center gap-8 pt-4 text-[10px] font-black text-text-muted/60 uppercase tracking-widest">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-success rounded-full animate-pulse motion-reduce:animate-none" aria-hidden="true" />
-                Neural Connection: Stable
-              </div>
-              <div className="flex items-center gap-2">
-                <FileCode className="w-4 h-4" aria-hidden="true" />
-                API: REST/WebSocket Ready
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="relative hidden lg:flex flex-col gap-6"
-          >
-            <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_50px_100px_rgba(27,67,50,0.15)] relative group border border-border/20 bg-surface/50">
-              <ClimateNewsFeed />
-              {data.locationName && (
-                <div className="absolute bottom-0 left-0 right-0 z-10">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={data.locationName}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="h-48 rounded-b-[2.5rem] overflow-hidden"
-                    >
-                      <LiveImages locationName={data.locationName} />
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <HeroSection
+        city={city}
+        onCityChange={setCity}
+        data={data}
+        isAnalyzing={isAnalyzing}
+        onSearch={runAnalysis}
+      />
 
       {/* Map */}
       <section className="py-24 bg-surface/50 border-y border-border/20 relative" id="map">
@@ -428,7 +330,8 @@ export default function App() {
             </div>
           </div>
           <div className="h-[500px] md:h-[600px] w-full">
-            <MapVisualization
+            <Suspense fallback={<div className="w-full h-full rounded-xl bg-surface animate-pulse" />}>
+              <MapVisualization
               center={[data.lat, data.lon]}
               locationName={data.locationName}
               risk={data.risk}
@@ -437,7 +340,8 @@ export default function App() {
               onLocationSelect={handleMapClick}
               onSearch={handleMapSearch}
               onShare={shareAnalysis}
-            />
+              />
+            </Suspense>
           </div>
         </div>
       </section>
@@ -489,7 +393,9 @@ export default function App() {
           </div>
 
           <div className="h-[500px] md:h-[600px] w-full">
-            <LiveImages locationName={liveImagesLocation} />
+            <Suspense fallback={<div className="w-full h-full rounded-xl bg-surface animate-pulse" />}>
+              <LiveImages locationName={liveImagesLocation} />
+            </Suspense>
           </div>
         </div>
       </section>
@@ -725,7 +631,9 @@ export default function App() {
                   </div>
                 </div>
                 <div className="w-full md:w-64 h-40 hidden md:block pointer-events-none" aria-hidden="true">
-                  <Schematic />
+                  <Suspense fallback={<div className="w-full h-full rounded-xl bg-surface animate-pulse" />}>
+                    <Schematic />
+                  </Suspense>
                 </div>
               </div>
 
@@ -936,47 +844,3 @@ export default function App() {
   );
 }
 
-function MetricModule({ icon, label, value, unit, trend, trendUp, color }: {
-  icon: ReactNode; label: string; value: number; unit: string;
-  trend: string; trendUp?: boolean; color: string;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="card-impact space-y-8 group border-accent/5"
-    >
-      <div className="flex items-center justify-between">
-        <div className="w-12 h-12 bg-bg rounded-xl flex items-center justify-center text-accent group-hover:scale-110 transition-transform duration-500">
-          {icon}
-        </div>
-        <div className={`text-[10px] font-bold uppercase tracking-widest ${color}`}>
-          {trendUp !== undefined ? (trendUp ? '\u2191' : '\u2193') : '\u2022'} {trend}
-        </div>
-      </div>
-      <div className="space-y-1">
-        <div className="text-[10px] uppercase font-bold text-text-muted/60 tracking-widest">{label}</div>
-        <div className="flex items-baseline gap-2">
-          <span className="text-5xl font-serif text-accent leading-none">{value}</span>
-          <span className="text-xl font-serif text-text-muted italic">{unit}</span>
-        </div>
-      </div>
-      <div className="pt-2">
-        <div className="h-1 w-full bg-bg rounded-full overflow-hidden relative">
-          <motion.div
-            initial={{ width: 0 }}
-            whileInView={{ width: '60%' }}
-            className="h-full bg-accent/20"
-          />
-          <motion.div
-            animate={{ x: ['-100%', '200%'] }}
-            transition={{ repeat: Infinity, duration: 4, ease: 'linear' }}
-            className="absolute inset-0 bg-accent/5 skew-x-[-20deg] w-1/4 motion-reduce:animate-none"
-            aria-hidden="true"
-          />
-        </div>
-      </div>
-    </motion.div>
-  );
-}

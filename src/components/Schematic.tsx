@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import { motion } from 'motion/react';
 
-export default function Schematic() {
+const Schematic = memo(function Schematic() {
   return (
     <div className="w-full h-full min-h-[300px] bg-bg/50 rounded-3xl border border-border/20 p-8 flex items-center justify-center relative overflow-hidden group">
       {/* Background Grid */}
@@ -50,4 +51,6 @@ export default function Schematic() {
       <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-accent/20" />
     </div>
   );
-}
+});
+
+export default Schematic;

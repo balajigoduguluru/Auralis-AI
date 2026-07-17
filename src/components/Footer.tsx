@@ -1,6 +1,5 @@
 import { Zap, ChevronRight, ArrowRight } from 'lucide-react';
 import Schematic from './Schematic';
-import NetworkStatusBanner from './NetworkStatus';
 
 interface FooterProps {
   showNotification: (message: string, type: 'success' | 'info') => void;
@@ -101,7 +100,6 @@ export default function Footer({ showNotification }: FooterProps) {
           </div>
         </div>
       </div>
-      <NetworkStatusBanner />
     </footer>
   );
 }
