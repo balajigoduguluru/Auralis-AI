@@ -73,6 +73,14 @@ export interface WeatherState {
 
 export type LoginStep = 0 | 1 | 2 | 3 | 4;
 
+export interface ClimateNewsArticle {
+  title: string;
+  source: string;
+  url: string;
+  publishedAt: string;
+  description?: string;
+}
+
 export interface FeedbackEntry {
   id: string;
   message: string;

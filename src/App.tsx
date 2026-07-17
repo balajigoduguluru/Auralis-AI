@@ -15,6 +15,7 @@ import { generateEnvironmentalReport, hasApiKey } from './services/geminiService
 import MapVisualization from './components/MapVisualization';
 import NetworkStatusBanner from './components/NetworkStatus';
 import LiveImages from './components/LiveImages';
+import ClimateNewsFeed from './components/ClimateNewsFeed';
 import Schematic from './components/Schematic';
 import WeatherWatcher from './components/WeatherWatcher';
 import Navbar from './components/Navbar';
@@ -80,7 +81,7 @@ export default function App() {
     isLoggedIn, showLoginModal, loginStep, startLoginSequence, handleLogout, abortLogin,
   } = useAuth(showNotification);
 
-  const [city, setCity] = useState('Nellore');
+  const [city, setCity] = useState('');
   const [feedback, setFeedback] = useState('');
   const [feedbackEmail, setFeedbackEmail] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -100,13 +101,14 @@ export default function App() {
     } catch { return []; }
   });
   const [mapZoom, setMapZoom] = useState(14);
+  const [liveImagesLocation, setLiveImagesLocation] = useState('Initialize Node');
 
   const [data, setData] = useState({
     temp: 0, humidity: 0, rainfall: 0, windSpeed: 0, windDirection: 0,
     pressure: 0, visibility: 0, uvIndex: 0, risk: 'PENDING' as string,
     recommendation: 'Awaiting sentinel link for real-time telemetry.',
     lastUpdate: 'System Cold-Start', coordinates: 'Calculating...',
-    lat: 48.8566, lon: 2.3522, locationName: 'Initialize Node',
+    lat: 48.8566, lon: 2.3522, locationName: '',
   });
   const [history, setHistory] = useState<HistoryEntry[]>(initialHistory);
   const [prediction, setPrediction] = useState<Prediction[]>([
@@ -121,8 +123,6 @@ export default function App() {
     log.title.toLowerCase().includes(logFilter.toLowerCase()) ||
     log.desc.toLowerCase().includes(logFilter.toLowerCase())
   );
-
-  useEffect(() => { runAnalysis(undefined, 1, 'Nellore'); }, []);
 
   useEffect(() => {
     if (!hasApiKey()) {
@@ -153,6 +153,7 @@ export default function App() {
         coordinates: weather.coordinates, lat: weather.lat, lon: weather.lon,
         locationName: weather.locationName,
       });
+      setLiveImagesLocation(weather.locationName);
       setHistory(weather.history);
       const now = new Date();
       const ts = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
@@ -180,6 +181,7 @@ export default function App() {
         coordinates: weather.coordinates, lat: weather.lat, lon: weather.lon,
         locationName: weather.locationName,
       });
+      setLiveImagesLocation(weather.locationName);
       setHistory(weather.history);
       const now = new Date();
       const ts = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
@@ -381,37 +383,28 @@ export default function App() {
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="relative hidden lg:block">
-            <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_50px_100px_rgba(27,67,50,0.15)] relative group border border-border/20">
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={data.locationName}
-                  initial={{ opacity: 0, scale: 1.1 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1.5 }}
-                  src={`https://loremflickr.com/1200/1600/${data.locationName.split(',')[0]},landscape,nature`}
-                  alt={`Satellite view of ${data.locationName}`}
-                  className="w-full h-full object-cover grayscale-[0.2] transition-transform duration-[4000ms] group-hover:scale-110"
-                />
-              </AnimatePresence>
-              <div className="absolute inset-0 bg-gradient-to-t from-accent/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" aria-hidden="true" />
-              <div className="absolute top-8 right-8 bg-black/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10 text-[10px] font-mono text-white/80 tracking-widest uppercase">
-                Satellite Feed: Live
-              </div>
-              <div className="absolute bottom-8 left-8 right-8 p-8 bg-white/10 backdrop-blur-2xl rounded-[2rem] border border-white/20 text-white space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-black tracking-[0.3em] opacity-60">Visual Confirmation</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-success rounded-full shadow-[0_0_10px_#52B788]" aria-hidden="true" />
-                    <span className="text-[8px] font-black uppercase tracking-widest text-success">Verified</span>
-                  </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="relative hidden lg:flex flex-col gap-6"
+          >
+            <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_50px_100px_rgba(27,67,50,0.15)] relative group border border-border/20 bg-surface/50">
+              <ClimateNewsFeed />
+              {data.locationName && (
+                <div className="absolute bottom-0 left-0 right-0 z-10">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={data.locationName}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="h-48 rounded-b-[2.5rem] overflow-hidden"
+                    >
+                      <LiveImages locationName={data.locationName} />
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
-                <div className="text-3xl font-serif italic tracking-tight">&ldquo;{data.locationName}&rdquo;</div>
-                <div className="text-[10px] font-bold text-white/70 leading-relaxed">
-                  Deep-learning image verification successful. Regional topography matches expected climate signature profiles for this sector.
-                </div>
-              </div>
+              )}
             </div>
           </motion.div>
         </div>
@@ -470,8 +463,33 @@ export default function App() {
             </div>
           </div>
 
+          {/* Location Input for Live Images */}
+          <div className="max-w-md mx-auto">
+            <div className="relative group" role="search" aria-label="Location for satellite imagery">
+              <input
+                type="text"
+                placeholder="Enter location for environmental imagery..."
+                value={liveImagesLocation}
+                onChange={(e) => setLiveImagesLocation(e.target.value)}
+                className="input-earth shadow-2xl shadow-accent/5 focus:ring-accent/20 w-full pr-16"
+                aria-label="Location for satellite imagery"
+              />
+              <button
+                type="button"
+                onClick={() => setLiveImagesLocation(liveImagesLocation)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-accent text-white rounded-lg flex items-center justify-center hover:bg-accent-light transition-colors shadow-lg active:scale-95 cursor-pointer"
+                aria-label="Update imagery"
+              >
+                <Search className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-[9px] font-black text-text-muted/60 uppercase tracking-widest mt-3 text-center">
+              Independent of telemetry analysis &mdash; updates satellite imagery only
+            </p>
+          </div>
+
           <div className="h-[500px] md:h-[600px] w-full">
-            <LiveImages locationName={data.locationName} />
+            <LiveImages locationName={liveImagesLocation} />
           </div>
         </div>
       </section>
