@@ -1,9 +1,11 @@
+import { lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Activity, FileCode, Search } from 'lucide-react';
-import ClimateNewsFeed from '../components/ClimateNewsFeed';
-import LiveImages from '../components/LiveImages';
 import type { AppData } from '../types';
 import type { FormEvent } from 'react';
+
+const ClimateNewsFeed = lazy(() => import('../components/ClimateNewsFeed'));
+const LiveImages = lazy(() => import('../components/LiveImages'));
 
 interface HeroSectionProps {
   city: string;
@@ -72,7 +74,9 @@ export default function HeroSection({ city, onCityChange, data, isAnalyzing, onS
           className="relative hidden lg:flex flex-col gap-6"
         >
           <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_50px_100px_rgba(27,67,50,0.15)] relative group border border-border/20 bg-surface/50">
-            <ClimateNewsFeed />
+            <Suspense fallback={<div className="w-full h-48 rounded-2xl bg-surface/50 animate-pulse" />}>
+              <ClimateNewsFeed />
+            </Suspense>
             {data.locationName && (
               <div className="absolute bottom-0 left-0 right-0 z-10">
                 <AnimatePresence mode="wait">
@@ -83,7 +87,9 @@ export default function HeroSection({ city, onCityChange, data, isAnalyzing, onS
                     exit={{ opacity: 0 }}
                     className="h-48 rounded-b-[2.5rem] overflow-hidden"
                   >
-                    <LiveImages locationName={data.locationName} />
+                    <Suspense fallback={<div className="w-full h-48 bg-surface/50 animate-pulse" />}>
+                      <LiveImages locationName={data.locationName} />
+                    </Suspense>
                   </motion.div>
                 </AnimatePresence>
               </div>

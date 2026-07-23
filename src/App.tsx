@@ -13,6 +13,7 @@ import {
 import { fetchWeather, fetchWeatherByCoords } from './services/weatherService';
 import { generateEnvironmentalReport, hasApiKey } from './services/geminiService';
 import NetworkStatusBanner from './components/NetworkStatus';
+import Schematic from './components/Schematic';
 import WeatherWatcher from './components/WeatherWatcher';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -21,7 +22,6 @@ import RiskBanner from './components/RiskBanner';
 
 const MapVisualization = lazy(() => import('./components/MapVisualization'));
 const LiveImages = lazy(() => import('./components/LiveImages'));
-const Schematic = lazy(() => import('./components/Schematic'));
 const AuthModal = lazy(() => import('./components/AuthModal'));
 const DiagnosticModal = lazy(() => import('./components/DiagnosticModal'));
 const AdminModal = lazy(() => import('./components/AdminModal'));
@@ -631,9 +631,7 @@ export default function App() {
                   </div>
                 </div>
                 <div className="w-full md:w-64 h-40 hidden md:block pointer-events-none" aria-hidden="true">
-                  <Suspense fallback={<div className="w-full h-full rounded-xl bg-surface animate-pulse" />}>
-                    <Schematic />
-                  </Suspense>
+                  <Schematic />
                 </div>
               </div>
 
