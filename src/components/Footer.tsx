@@ -37,7 +37,7 @@ export default function Footer({ showNotification }: FooterProps) {
               <span className="text-3xl font-bold tracking-tighter text-white/90">AURALIS AI</span>
             </div>
 
-            <h2 className="text-xl md:text-2xl font-serif leading-relaxed text-white/90 max-w-sm">
+            <h2 className="text-xl md:text-2xl font-serif leading-relaxed text-white/70 max-w-sm">
               Designing the <span className="italic text-white/90">intelligence</span> of tomorrow.
             </h2>
 
