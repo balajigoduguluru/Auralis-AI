@@ -44,7 +44,7 @@ export default function Footer({ showNotification }: FooterProps) {
             <div className="flex flex-wrap items-center gap-6 pt-2">
               <button
                 onClick={() => showNotification('Loading privacy terms...', 'info')}
-                className="text-xs uppercase font-bold tracking-[0.2em] text-white/60 hover:text-white/90 transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white/60 cursor-pointer"
+                className="text-xs uppercase font-bold tracking-[0.2em] text-white/60 hover:text-white/90 transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white/60 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                 aria-label="View neural privacy terms"
               >
                 Neural Privacy
@@ -52,7 +52,7 @@ export default function Footer({ showNotification }: FooterProps) {
               <span className="w-1.5 h-1.5 rounded-full bg-white/30" aria-hidden="true" />
               <button
                 onClick={() => showNotification('Accessing ethical disclosure...', 'info')}
-                className="text-xs uppercase font-bold tracking-[0.2em] text-white/60 hover:text-white/90 transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white/60 cursor-pointer"
+                className="text-xs uppercase font-bold tracking-[0.2em] text-white/60 hover:text-white/90 transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white/60 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                 aria-label="View agent ethics"
               >
                 Agent Ethics
@@ -92,7 +92,7 @@ export default function Footer({ showNotification }: FooterProps) {
                 className="w-full bg-white/5 border border-white/20 rounded-xl py-4 px-5 pr-14 outline-none focus:border-white/50 focus:bg-white/10 transition-all text-sm font-medium tracking-wider placeholder:text-white/40"
                 aria-label="Email address"
               />
-              <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all cursor-pointer" aria-label="Subscribe">
+              <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 h-11 w-11 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70" aria-label="Subscribe">
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
             </form>
@@ -107,7 +107,7 @@ export default function Footer({ showNotification }: FooterProps) {
       {/* Bottom copyright bar: now only the copyright text */}
       <div className="mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-[0.2em] text-white/40">
-          <span>&copy; 2026 Developed by <span className="text-white/70">Balaji Goduguluru</span></span>
+          <span>&copy; 2026 Developed by <span className="text-white/60">Balaji Goduguluru</span></span>
         </div>
       </div>
     </footer>
