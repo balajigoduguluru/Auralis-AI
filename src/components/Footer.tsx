@@ -24,7 +24,7 @@ export default function Footer({ showNotification }: FooterProps) {
           <div className="space-y-6">
             {/* Left content */}
             <div
-              className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity group"
+              className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               role="button"
               tabIndex={0}
@@ -92,7 +92,7 @@ export default function Footer({ showNotification }: FooterProps) {
                 className="w-full bg-white/5 border border-white/20 rounded-xl py-4 px-5 pr-14 outline-none focus:border-white/50 focus:bg-white/10 transition-all text-sm font-medium tracking-wider placeholder:text-white/30"
                 aria-label="Email address"
               />
-              <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all cursor-pointer" aria-label="Subscribe">
+              <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all cursor-pointer" aria-label="Subscribe">
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
             </form>
