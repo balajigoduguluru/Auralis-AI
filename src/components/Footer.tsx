@@ -34,10 +34,10 @@ export default function Footer({ showNotification }: FooterProps) {
               <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 shadow-2xl group-hover:bg-white/20 transition-colors">
                 <Zap className="w-7 h-7" aria-hidden="true" />
               </div>
-              <span className="text-3xl font-bold tracking-tighter">AURALIS AI</span>
+              <span className="text-3xl font-bold tracking-tighter text-white/90">AURALIS AI</span>
             </div>
 
-            <h2 className="text-xl md:text-2xl font-serif leading-relaxed text-white/70 max-w-sm">
+            <h2 className="text-xl md:text-2xl font-serif leading-relaxed text-white/90 max-w-sm">
               Designing the <span className="italic text-white/90">intelligence</span> of tomorrow.
             </h2>
 
@@ -106,7 +106,7 @@ export default function Footer({ showNotification }: FooterProps) {
 
       {/* Bottom copyright bar: now only the copyright text */}
       <div className="mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-[0.2em] text-white/60">
+        <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-[0.2em] text-white/40">
           <span>&copy; 2026 Developed by <span className="text-white/70">Balaji Goduguluru</span></span>
         </div>
       </div>
