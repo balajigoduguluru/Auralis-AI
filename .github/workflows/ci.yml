@@ -31,12 +31,12 @@ jobs:
       - name: Run npm audit
         run: npm audit --production --audit-level=high
       - name: Run Snyk scan
-        uses: snyk/actions@v2
+        uses: snyk/actions@v2.0.0
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.23.0
+        uses: aquasecurity/trivy-action@0.25.0
         with:
           scan-type: 'fs'
           ignore-unfixed: true
