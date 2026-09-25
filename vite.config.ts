@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig({
-  base: process.env.VERCEL ? '/' : '/Auralis-AI/',
+  base: process.env.VERCEL ? '/' : (process.env.BASE_URL || '/'),
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
