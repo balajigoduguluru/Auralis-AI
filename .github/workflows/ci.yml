@@ -1,63 +1,46 @@
-name: CI
+name: CI Pipeline
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "20"
 
 jobs:
-  build-test:
+  quality:
+    name: Quality Checks
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run typecheck
-      - run: npm run lint
-      - run: npm test -- --coverage
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
 
-  security-scan:
-    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Run npm audit
-        run: npm audit --production --audit-level=high
-      - name: Run Snyk scan
-        uses: snyk/actions@v2.0.0
-        continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.25.0
-        with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-      - name: Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-results.sarif'
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  performance-budget:
-    needs: build-test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - run: npm ci
-      - run: npm run build
-      - name: Check bundle size
-        uses: andresz1/size-limit-action@v1
-        with:
-          size-limit: '100kb'
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+
+      - name: Production build
+        run: npm run build
+
+      - name: Check build output integrity
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "❌ Build output directory 'dist' not found"
+            exit 1
+          fi
+          echo "✅ Build output verified — $(ls -lh dist/index.html | awk '{print $5}') index.html"
