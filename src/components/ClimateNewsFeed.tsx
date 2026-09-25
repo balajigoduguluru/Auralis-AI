@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Activity, ExternalLink, RefreshCw, Newspaper } from 'lucide-react';
 import type { ClimateNewsArticle } from '../types';
@@ -15,24 +15,28 @@ export default function ClimateNewsFeed() {
   const [articles, setArticles] = useState<ClimateNewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const fetchRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+    let hasCached = false;
 
     async function fetchNews() {
       try {
         const cached = sessionStorage.getItem('auralis-climate-news');
-        if (cached) {
+        if (cached && !cancelled) {
           const parsed = JSON.parse(cached) as ClimateNewsArticle[];
-          if (!cancelled) {
-            setArticles(parsed);
-            setLoading(false);
-            return;
-          }
+          setArticles(parsed);
+          setLoading(false);
+          hasCached = true;
+          // Continue to fetch fresh data in background — don't return early
         }
 
         const res = await fetch(buildGuardianUrl());
-        if (!res.ok) throw new Error(`Guardian API returned ${res.status}`);
+        if (!res.ok) {
+          if (res.status === 429) throw new Error('Rate limit hit. Please wait before refreshing.');
+          throw new Error(`Guardian API returned ${res.status}`);
+        }
         const data = await res.json();
 
         if (!cancelled && data.response?.results) {
@@ -48,16 +52,20 @@ export default function ClimateNewsFeed() {
           setArticles(mapped);
           sessionStorage.setItem('auralis-climate-news', JSON.stringify(mapped));
           setError(null);
-        } else if (!cancelled) {
+        } else if (!cancelled && !hasCached) {
           setError('Unable to load climate news.');
         }
-      } catch {
-        if (!cancelled) setError('Unable to load climate news.');
+      } catch (err) {
+        if (!cancelled && !hasCached) {
+          const message = err instanceof Error ? err.message : '';
+          setError(message || 'Unable to load climate news.');
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
     }
 
+    fetchRef.current = fetchNews;
     fetchNews();
     const interval = setInterval(fetchNews, REFRESH_INTERVAL);
     return () => {
@@ -82,7 +90,7 @@ export default function ClimateNewsFeed() {
           {error}
         </p>
         <button
-          onClick={() => window.location.reload()}
+          onClick={() => { setError(null); setLoading(true); fetchRef.current?.(); }}
           className="flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-accent hover:text-white transition-all cursor-pointer"
         >
           <RefreshCw className="w-3 h-3" aria-hidden="true" />

@@ -31,6 +31,7 @@ import { useAuth } from './hooks/useAuth';
 import MetricModule from './components/ui/MetricModule';
 import { calculateRisk, generatePredictions } from './utils/risk';
 import { csvExport } from './utils/csv';
+import { isValidEmail, sanitizeEmail } from './utils/sanitize';
 import {
   INITIAL_HISTORY, INITIAL_LOGS, INITIAL_PREDICTIONS, INITIAL_DATA,
 } from './config/constants';
@@ -171,11 +172,17 @@ export default function App() {
   const submitObservation = async () => {
     if (!feedback.trim()) { showNotification('Please provide observation details.', 'info'); return; }
     if (!feedbackEmail.trim()) { showNotification('Please provide your email for confirmation.', 'info'); return; }
+    if (!isValidEmail(feedbackEmail.trim())) {
+      showNotification('Please enter a valid email address.', 'info');
+      return;
+    }
+
+    const sanitizedEmail = sanitizeEmail(feedbackEmail.trim());
 
     const entry: FeedbackEntry = {
       id: crypto.randomUUID(),
       message: feedback.trim(),
-      userEmail: feedbackEmail.trim(),
+      userEmail: sanitizedEmail,
       location: data.locationName,
       timestamp: new Date().toLocaleString(),
       notified: false,
@@ -208,6 +215,10 @@ export default function App() {
 
     if (entry.notified && entry.autoReplied) {
       showNotification('Thank you for your observation! A confirmation has been sent to your email.', 'success');
+    } else if (entry.notified && !entry.autoReplied) {
+      showNotification('Thank you for your observation! Admin notified, but the confirmation email could not be sent.', 'info');
+    } else if (!entry.notified && entry.autoReplied) {
+      showNotification('Thank you for your observation! Confirmation sent, but admin notification failed.', 'info');
     } else {
       showNotification('Thank you for your observation!', 'success');
     }

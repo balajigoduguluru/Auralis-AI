@@ -15,7 +15,7 @@ function initEmailJS(): void {
 }
 
 export function canSendEmail(): boolean {
-  return !!(SERVICE_ID && NOTIFICATION_TEMPLATE_ID && PUBLIC_KEY);
+  return !!(SERVICE_ID && NOTIFICATION_TEMPLATE_ID && AUTO_REPLY_TEMPLATE_ID && PUBLIC_KEY);
 }
 
 export async function sendAdminNotification(data: {
