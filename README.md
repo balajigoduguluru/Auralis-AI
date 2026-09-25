@@ -1,32 +1,47 @@
-# Auralis AI — Environmental Intelligence Platform
+<p align="center">
+  <img src="https://github.com/balajigoduguluru/auralis-ai/blob/main/screenshots/01-hero.png?raw=true" alt="Auralis AI Hero" width="800"/>
+</p>
 
-![CI](https://github.com/balajigoduguluru/auralis-ai/actions/workflows/ci.yml/badge.svg)
-![License](https://img.shields.io/github/license/balajigoduguluru/auralis-ai)
-![Node.js Version](https://img.shields.io/badge/node-%3E%3D%2018-brightgreen)
-![TypeScript](https://img.shields.io/badge/typescript-%3E%3D%205-blue)
+<h1 align="center">Auralis AI</h1>
+<h3 align="center">Advanced climate diagnostics and environmental risk modeling</h3>
+
+<p align="center">
+  <a href="https://github.com/balajigoduguluru/auralis-ai/actions/workflows/ci.yml">
+    <img src="https://github.com/balajigoduguluru/auralis-ai/actions/workflows/ci.yml/badge.svg" alt="CI">
+  </a>
+  <a href="https://github.com/balajigoduguluru/auralis-ai/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/balajigoduguluru/auralis-ai" alt="License">
+  </a>
+  <a href="https://hub.docker.com/r/balajigoduguluru/auralis-ai">
+    <img src="https://img.shields.io/docker/pulls/balajigoduguluru/auralis-ai" alt="Docker Pulls">
+  </a>
+  <a href="https://github.com/balajigoduguluru/auralis-ai/releases">
+    <img src="https://img.shields.io/github/v/release/balajigoduguluru/auralis-ai" alt="Release Version">
+  </a>
+</p>
 
 > **Advanced climate diagnostics and environmental risk modeling.** Powered by the Auralis Agentic Framework.
 
-![Auralis AI Hero](screenshots/01-hero.png)
-
 ## Overview
 
-Auralis AI is a full-stack environmental intelligence platform that combines real-time weather telemetry, satellite imagery, AI-generated risk assessments, and community-driven observation verification. Built with React 19, TypeScript, and modern web technologies.
+Environmental professionals and emergency responders struggle with fragmented data sources when assessing climate risks. Auralis AI unifies real-time weather telemetry, satellite imagery, AI-driven risk analysis, and community verification into a single intuitive platform—turning complex environmental data into actionable intelligence in seconds.
 
 ## Architecture & Data Flow
 
-```mermaid
-graph TD
-    A[User Location Input] --> B[Weather API]
-    B --> C[Risk Calculation Engine]
-    C --> D[AI Report Generation (Gemini)]
-    D --> E[State Update]
-    E --> F[UI Render]
-    C --> G[Community Feedback System]
-    G --> H[EmailJS Notifications]
-    H --> I[Admin Panel Alerts]
-    style A fill:#e3f2fd,stroke:#1565c0
-    style F fill:#e8f5e9,stroke:#2e7d32
+```
+User Location Input
+           ↓
+   Weather API (OpenWeatherMap)
+           ↓
+Risk Calculation Engine
+           ↓
+AI Report Generation (Gemini)
+           ↓
+State Update → UI Render
+           ↓
+Community Feedback → EmailJS Notifications
+           ↓
+Admin Panel Alerts
 ```
 
 ## Zero-Friction Quickstart
@@ -80,26 +95,15 @@ Visit `http://localhost:3000`
 | Icons         | Lucide React                        |
 | Utilities     | Canvas Confetti                     |
 
-## Screenshots
+## Roadmap
 
-| Section | Preview |
-|---------|---------|
-| **Hero & Telemetry Search** | ![Hero](screenshots/01-hero.png) |
-| **Geospatial Map** | ![Map](screenshots/02-map.png) |
-| **Satellite Imagery** | ![Satellite](screenshots/03-satellite.png) |
-| **Climate Analytics** | ![Analytics](screenshots/04-analytics.png) |
-| **Live Dashboard** | ![Dashboard](screenshots/05-dashboard.png) |
-| **Predictive Timeline** | ![Predictive](screenshots/06-predictive.png) |
-| **Community Feedback** | ![Community](screenshots/07-community.png) |
-| **Search: Tokyo** | ![Search Tokyo](screenshots/09-search-tokyo.png) |
-| **Feedback Submission** | ![Feedback](screenshots/10-feedback.png) |
-
-<details>
-<summary>View full-page screenshot</summary>
-
-![Full Page](screenshots/08-full-page.png)
-
-</details>
+| Quarter | Goals                                                                 |
+|---------|-----------------------------------------------------------------------|
+| Q1 2027 | Implement historical data analysis and trend visualization            |
+| Q2 2027 | Add support for additional weather APIs (NOAA, Meteomatics)           |
+| Q3 2027 | Introduce machine learning models for localized risk prediction       |
+| Q4 2027 | Launch mobile companion app with offline capabilities                 |
+| 2028    | Achieve SOC 2 compliance and enterprise-grade security certifications |
 
 ## Deployment
 
@@ -120,7 +124,6 @@ RUN npm run build
 
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 ```
