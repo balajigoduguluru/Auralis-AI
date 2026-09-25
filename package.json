@@ -46,13 +46,16 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "gh-pages": "^6.3.0",
+    "husky": "^9.1.7",
     "jsdom": "^29.1.1",
+    "lint-staged": "^17.5.1",
     "playwright": "^1.61.1",
     "prettier": "^3.9.5",
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
     "vite": "^8.1.4",
+    "vitepress": "^1.6.4",
     "vitest": "^4.1.10"
   }
 }
