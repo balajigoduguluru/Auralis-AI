@@ -12,6 +12,7 @@ concurrency:
 
 env:
   NODE_VERSION: "20"
+  BASE_URL: "/${{ github.event.repository.name }}/"
 
 jobs:
   deploy:
