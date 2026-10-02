@@ -30,20 +30,25 @@ export default function ClimateNewsFeed() {
     async function fetchNews() {
       try {
         const cached = sessionStorage.getItem('auralis-climate-news');
+        console.log('Climate News Feed: Checking cache:', cached ? 'Found' : 'Not found');
         if (cached && !cancelled) {
           const parsed = JSON.parse(cached) as ClimateNewsArticle[];
+          console.log('Climate News Feed: Loaded from cache, articles:', parsed.length);
           setArticles(parsed);
           setLoading(false);
           hasCached = true;
           // Continue to fetch fresh data in background — don't return early
         }
 
+        console.log('Climate News Feed: Fetching from NewsAPI with key:', NEWS_API_KEY ? 'Present' : 'Missing');
         const res = await fetch(buildNewsApiUrl());
+        console.log('Climate News Feed: NewsAPI response status:', res.status);
         if (!res.ok) {
           if (res.status === 429) throw new Error('Rate limit hit. Please wait before refreshing.');
           throw new Error(`News API returned ${res.status}`);
         }
         const data = await res.json();
+        console.log('Climate News Feed: NewsAPI data received, articles:', data.articles ? data.articles.length : 0);
 
         if (!cancelled && data.articles) {
           const mapped: ClimateNewsArticle[] = data.articles
@@ -55,13 +60,16 @@ export default function ClimateNewsFeed() {
               publishedAt: article.publishedAt || '',
               description: article.description || undefined,
             }));
+          console.log('Climate News Feed: Processed articles, count:', mapped.length);
           setArticles(mapped);
           sessionStorage.setItem('auralis-climate-news', JSON.stringify(mapped));
           setError(null);
         } else if (!cancelled && !hasCached) {
+          console.log('Climate News Feed: No articles and no cache');
           setError('Unable to load climate news.');
         }
       } catch (err) {
+        console.error('Climate News Feed: Error fetching news:', err);
         if (!cancelled && !hasCached) {
           const message = err instanceof Error ? err.message : '';
           setError(message || 'Unable to load climate news.');
