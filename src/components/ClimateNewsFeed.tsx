@@ -1,14 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Activity, ExternalLink, RefreshCw, Newspaper } from 'lucide-react';
-import type { ClimateNewsArticle } from '../types';
+interface ClimateNewsArticle {
+  title: string;
+  source: string;
+  url: string;
+  publishedAt: string;
+  description?: string;
+}
 
-const GUARDIAN_API_KEY = import.meta.env.VITE_GUARDIAN_API_KEY;
+const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 const REFRESH_INTERVAL = 5 * 60 * 1000;
 
-function buildGuardianUrl(): string {
-  const key = GUARDIAN_API_KEY || 'test';
-  return `https://content.guardianapis.com/search?q=climate%20AND%20environment&show-fields=headline,byline,short-url&order-by=newest&page-size=10&api-key=${key}`;
+function buildNewsApiUrl(): string {
+  const key = NEWS_API_KEY;
+  return `https://newsapi.org/v2/everything?q=climate%20OR%20environment&language=en&sortBy=publishedAt&pageSize=10&apiKey=${key}`;
 }
 
 export default function ClimateNewsFeed() {
@@ -32,23 +38,23 @@ export default function ClimateNewsFeed() {
           // Continue to fetch fresh data in background — don't return early
         }
 
-        const res = await fetch(buildGuardianUrl());
+        const res = await fetch(buildNewsApiUrl());
         if (!res.ok) {
           if (res.status === 429) throw new Error('Rate limit hit. Please wait before refreshing.');
-          throw new Error(`Guardian API returned ${res.status}`);
+          throw new Error(`News API returned ${res.status}`);
         }
         const data = await res.json();
 
-        if (!cancelled && data.response?.results) {
-          const mapped: ClimateNewsArticle[] = data.response.results.map(
-            (a: Record<string, unknown>) => ({
-              title: (a.webTitle as string) || 'Untitled',
-              source: 'The Guardian',
-              url: (a.webUrl as string) || '#',
-              publishedAt: (a.webPublicationDate as string) || '',
-              description: (a.fields as Record<string, string>)?.['headline'] || undefined,
-            })
-          );
+        if (!cancelled && data.articles) {
+          const mapped: ClimateNewsArticle[] = data.articles
+            .filter((article: any) => article.title && article.url && !article.title.toLowerCase().includes('[removed]'))
+            .map((article: any) => ({
+              title: article.title || 'Untitled',
+              source: article.source?.name || 'Unknown Source',
+              url: article.url || '#',
+              publishedAt: article.publishedAt || '',
+              description: article.description || undefined,
+            }));
           setArticles(mapped);
           sessionStorage.setItem('auralis-climate-news', JSON.stringify(mapped));
           setError(null);

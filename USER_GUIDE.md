@@ -51,8 +51,9 @@ Auralis AI is a **client-side Single-Page Application (SPA)** for environmental 
 ## 2. Getting Started
 
 1. Open the application in a browser at `http://localhost:3000` (development) or the deployed URL
-2. Optionally configure a `VITE_GEMINI_API_KEY` in `.env.local` for AI-generated environmental reports
-3. Optionally configure EmailJS credentials to receive email notifications when users submit observations
+2. Optionally configure a `VITE_OPENROUTER_API_KEY` in `.env.local` for AI-generated environmental reports (uses Gemini model via OpenRouter)
+3. Optionally configure a `VITE_NEWS_API_KEY` in `.env.local` for live climate news feed
+4. Optionally configure EmailJS credentials to receive email notifications when users submit observations
 
 ---
 
@@ -351,7 +352,8 @@ npm run lint
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `VITE_GEMINI_API_KEY` | No | Google Gemini API key for AI reports |
+| `VITE_OPENROUTER_API_KEY` | No | OpenRouter API key for accessing Gemini model for AI reports |
+| `VITE_NEWS_API_KEY` | No | NewsAPI.org API key for live climate news feed |
 | `APP_URL` | No | Public URL for the instance |
 | `VITE_DEBUG_MODE` | No | Enable debug logging (`true`/`false`) |
 | `DISABLE_HMR` | No | Disable Hot Module Replacement |

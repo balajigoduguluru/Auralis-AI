@@ -8,7 +8,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig({
-  base: process.env.BASE_URL || '/',
+  base: process.env.GITHUB_ACTIONS === 'true'
+    ? `/${process.env.GITHUB_REPOSITORY?.split('/')[1] || ''}/`
+    : process.env.BASE_URL || '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

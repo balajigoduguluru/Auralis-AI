@@ -10,10 +10,6 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
-env:
-  NODE_VERSION: "20"
-  BASE_URL: "/${{ github.event.repository.name }}/"
-
 jobs:
   deploy:
     name: Build & Deploy
@@ -25,10 +21,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ env.NODE_VERSION }}
+      - name: Set BASE_URL
+        run: |
+          REPO=${{ github.repository }}
+          BASE_URL="/${REPO#*/}/"
+          echo "BASE_URL=$BASE_URL" >> $GITHUB_ENV
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: "20"
           cache: "npm"
 
       - name: Install dependencies
